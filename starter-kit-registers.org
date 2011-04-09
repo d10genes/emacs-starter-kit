@@ -14,6 +14,13 @@ You should add registers here for the files you edit most often.
 #+begin_src emacs-lisp 
   (dolist (r `((?i (file . ,(concat dotfiles-dir "init.el")))
                (?s (file . ,(concat dotfiles-dir "starter-kit.org")))
-               (?r (file . ,(concat dotfiles-dir "starter-kit-registers.org")))))
+               (?r (file . ,(concat dotfiles-dir "starter-kit-registers.org")))
+               (?l (file . ,(concat dotfiles-dir "starter-kit-lisp.org")))
+               (?p (file . ,(concat dotfiles-dir "starter-kit-python.org")))
+               (?d (file . ,(concat dotfiles-dir "starter-kit-defuns.org")))
+               (?o (file . ,(concat dotfiles-dir "starter-kit-org.org")))
+               (?y (file . ,(concat "/Users/FingerMan/Dropbox/AK-MBP/" "Summary.txt")))
+               (?b (file . ,(concat dotfiles-dir "starter-kit-bindings.org")))
+               (?m (file . ,(concat dotfiles-dir "starter-kit-misc.org")))))
     (set-register (car r) (cadr r)))
 #+end_src

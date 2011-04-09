@@ -18,7 +18,7 @@
 ;; used for doctests. To install, put this file somewhere in your emacs
 ;; `load-path' [1] and add the following line to your ~/.emacs file (the first
 ;; line only needed if the default (``"ipython"``) is wrong)::
-;;
+;;/Users/FingerMan/py-env/py27/bin/ipython
 ;;   (setq ipython-command "/SOME-PATH/ipython")
 ;;   (require 'ipython)
 ;;

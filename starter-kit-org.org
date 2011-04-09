@@ -14,12 +14,79 @@ GTD system or tool for reproducible research and literate programming.
 For more information on org-mode check out [[http://orgmode.org/worg/][worg]], a large Org-mode wiki
 which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
 
+** fs-tree
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (concat dotfiles-dir "/src/org-fstree"))  
+  (require 'org-fstree)
+#+END_SRC
+
+
+** My Latex stuff
+#+BEGIN_SRC emacs-lisp
+      ;;; Great help from here
+      ;;; http://www.mail-archive.com/emacs-orgmode@gnu.org/msg07645.html
+  (require 'org-install)
+  (require 'org-exp)
+  (require 'org-latex)
+  ;; (require 'org-atom)
+  ;; (require 'org-exp-bibtex)
+  
+  
+  (eval-after-load 'org-export-latex
+    '(progn
+       ;; http://permalink.gmane.org/gmane.emacs.orgmode/36716
+       (add-to-list 'org-export-latex-packages-alist '("" "amsmath" t))
+       (setcar (rassoc '("wasysym" t) org-export-latex-default-packages-alist)
+               "integrals")
+  
+       (add-hook 'org-mode-hook
+                 (lambda ()
+                   (setq org-export-latex-classes (cons '("myarticle"
+                                                          "% BEGIN My Article Defaults
+      \\documentclass[10pt,letterpaper]{article}
+      
+      \\usepackage[letterpaper,includeheadfoot,top=0.5in,bottom=0.5in,left=0.75in,right=0.75in]{geometry}
+      \\usepackage[utf8]{inputenc}
+      \\usepackage[T1]{fontenc}
+      \\usepackage{hyperref}
+      \\usepackage{lastpage}
+      \\usepackage{fancyhdr}
+      \\pagestyle{fancy}
+      \\renewcommand{\\headrulewidth}{1pt}
+      \\renewcommand{\\footrulewidth}{0.5pt}
+      
+      % Default footer
+      \\fancyfoot[L]{\\small \\jobname \\\\ \\today}
+      \\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
+      \\fancyfoot[R]{\\small \\copyright \\the\\year\\  Me}
+      % END My Article Defaults
+      
+      "
+                                                          ("\\section{%s}" . "\\section*{%s}")
+                                                          ("\\subsection{%s}" . "\\subsection*{%s}")
+                                                          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                                          ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                                          ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                                                        
+                                                        org-export-latex-classes))))))
+  
+#+END_SRC
+
 ** Org-Mode Hook
 The latest version of yasnippets doesn't play well with Org-mode, the
 following function allows these two to play nicely together
 #+begin_src emacs-lisp
   (defun yas/org-very-safe-expand ()
     (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+  
+  (add-hook 'org-mode-hook
+            (lambda ()
+              ;; yasnippet (using the new org-cycle hooks)
+              (make-variable-buffer-local 'yas/trigger-key)
+              (setq yas/trigger-key [tab])
+              (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+              (define-key yas/keymap [tab] 'yas/next-field)))
+  
 #+end_src
 
 #+begin_src emacs-lisp
@@ -42,6 +109,65 @@ following function allows these two to play nicely together
               ))
 #+end_src
 
+** My org file settings
+#+source: my org settings
+#+begin_src emacs-lisp
+    ;; Not sure
+  (defvar org-sys-directory "~/devel/org-mode/lisp"
+    "/opt/local/var/macports/sources/rsync.macports.org/release/ports/editors/org-mode 
+       ")
+  (setq load-path (cons org-sys-directory load-path))
+  
+  ;; Set to the location of your Org files on your local system
+  (setq org-directory "~/Dropbox/org")
+  (setq org-mobile-directory "~/Dropbox/MobileOrg")
+  (setq org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org")
+  ;; (setq org-agenda-files (quote ("~/Dropbox/org/")))
+  (custom-set-variables '(org-agenda-files (quote ("~/Dropbox/org/"
+                                                   ;; "~/Dropbox/org/school.org"
+                                                   ;; "~/Dropbox/org/leisure.org"
+                                                   ))))
+  
+  (setq org-tag-alist '(("libertarian" . ?l)
+                        ("mirism" . ?m)
+                        ("emacs" . ?e)
+                        ("thought" . ?i)
+                        ("engineer" . ?n)
+                        ("org-mode" . ?o)
+                        ("gradapp" . ?g)
+                        ))
+  
+  (setq org-todo-keywords
+        '((sequence "TODO(t)"  "|" "DONE(d)" "STARTED(s)""PARTIAL(p)" "WAITING(w)" )))
+  
+  ;; Capture
+  ;; http://orgmode.org/manual/Template-expansion.html#Template-expansion
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/Dropbox/org/notes.org" "Tasks")
+           "* TODO %?\n %u  %i")
+          ("j" "Journal" entry (file+datetree "~/Dropbox/org/thoughts-in-life3.org")
+           "* %?\n %u  %i\n %a")
+          ("i" "List Item" item (file "~/Dropbox/org/notes.org")
+           "- %?\n %u  %i\n %a")
+          ))
+  
+  
+  ;; Shortcut Keys
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cb" 'org-iswitchb)
+  (define-key global-map "\C-cc" 'org-capture)
+  
+
+#+end_src
+
+** Open org files in org...I think?
+#+source: name
+#+begin_src emacs-lisp
+    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+#+end_src
+   
 ** Speed keys
 Speed commands enable single-letter commands in Org-mode files when
 the point is at the beginning of a headline, or at the beginning of a

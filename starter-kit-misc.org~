@@ -1,0 +1,402 @@
+#+TITLE: Starter Kit Misc
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:starter-kit.org][Emacs Starter Kit]].
+
+** Stuff to do:
+   - [ ] visual line mode without auto-fill
+   - [ ] dvorak hook
+   - [ ] anything mode
+   - [ ] tabbar
+   - [X] paredit
+   - [X] super + for font
+   - [X] transparency defun
+   - [X] blinking
+
+
+* Starter Kit Misc
+Things that don't fit anywhere else.
+
+** Sentences
+   #+source: sentences
+   #+begin_src emacs-lisp
+     (setq sentence-end-double-space nil)
+   #+end_src
+   
+** Color Themes
+The [[http://www.nongnu.org/color-theme/][Color Themes]] package provides support for changing, saving,
+sharing Emacs color themes.  To view and apply color themes available
+on your system run =M-x color-theme-select=.  See the color theme
+website and EmacsWiki pages for more information.
+- http://www.nongnu.org/color-theme/
+- http://www.emacswiki.org/emacs/ColorTheme
+
+This following loads color-theme so that it is available by default.
+#+begin_src emacs-lisp
+  (add-to-list 'load-path
+               (expand-file-name "color-theme"
+                                 (expand-file-name "src" dotfiles-dir)))
+  
+  (add-to-list 'load-path
+               (expand-file-name "zenburn-emacs"
+                                 (expand-file-name "src" dotfiles-dir)))
+  (require 'color-theme)
+  (require 'zenburn)
+  (eval-after-load "color-theme"
+    '(progn
+       (color-theme-initialize)))
+  
+  (color-theme-zenburn)
+#+end_src
+
+Once you've selected a preferred color theme it can be installed by
+adding its function to your initialization.  For example
+#+begin_src emacs-lisp :tangle no
+  (color-theme-railscasts)
+#+end_src
+will load the =railscasts= color theme when Emacs starts.
+
+** Font Size
+   Set the font size to a bearable one:
+   #+source: Font
+   #+begin_src emacs-lisp
+     (set-face-attribute 'default nil :font "Menlo" :height 150)
+   #+end_src
+
+** Window system stuff
+
+#+srcname: starter-kit-window-view-stuff
+#+begin_src emacs-lisp 
+  (when window-system
+    (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+    (tooltip-mode -1)
+    (tool-bar-mode -1)
+    (blink-cursor-mode t)
+    (mouse-wheel-mode t))
+  
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  
+  (setq visible-bell 0
+        echo-keystrokes 0.1
+        font-lock-maximum-decoration t
+        inhibit-startup-message t
+        transient-mark-mode t
+        color-theme-is-global t
+        delete-by-moving-to-trash t
+        shift-select-mode nil
+        truncate-partial-width-windows nil
+        uniquify-buffer-name-style 'forward
+        whitespace-style '(trailing lines space-before-tab
+                                    indentation space-after-tab)
+        whitespace-line-column 100
+        ediff-window-setup-function 'ediff-setup-windows-plain
+        oddmuse-directory (concat dotfiles-dir "oddmuse")
+        xterm-mouse-mode t
+        save-place-file (concat dotfiles-dir "places"))
+  
+#+end_src
+
+** Nxhtml -- utilities for we development
+[[http://ourcomments.org/Emacs/nXhtml/doc/nxhtml.html][Nxhtml]] is a large package of utilities for web development and for
+embedding multiple major modes in a single buffer.
+
+Nxhtml is not installed in this version of the starter-kit by default,
+for information on installing nxhtml see [[http://www.emacswiki.org/emacs/NxhtmlMode][EmacsWiki-Nxhtml]].
+
+** Set browser
+Set this to whatever browser you use e.g...
+: ;; (setq browse-url-browser-function 'browse-url-firefox)
+: ;; (setq browse-url-browser-function 'browse-default-macosx-browser)
+: ;; (setq browse-url-browser-function 'browse-default-windows-browser)
+: ;; (setq browse-url-browser-function 'browse-default-kde)
+: ;; (setq browse-url-browser-function 'browse-default-epiphany)
+: ;; (setq browse-url-browser-function 'browse-default-w3m)
+: ;; (setq browse-url-browser-function 'browse-url-generic
+: ;;       browse-url-generic-program "~/src/conkeror/conkeror")
+
+** Transparently open compressed files
+#+begin_src emacs-lisp
+(auto-compression-mode t)
+#+end_src
+
+** Enable syntax highlighting for older Emacsen that have it off
+#+begin_src emacs-lisp
+(global-font-lock-mode t)
+#+end_src
+
+** No Menu Bar
+You really don't need this; trust me.
+#+srcname: starter-kit-no-menu
+#+begin_src emacs-lisp 
+(menu-bar-mode -1)
+#+end_src
+
+** Save a list of recent files visited.
+#+begin_emacs-lisp 
+(recentf-mode 1)
+#+end_emacs-lisp
+
+** Matching and highlighting parentheses
+   When the point is on them.
+#+srcname: starter-kit-match-parens
+#+begin_src emacs-lisp 
+(show-paren-mode 1)
+#+end_src
+
+** Anything mode
+#+source: anything mode
+#+begin_src emacs-lisp
+  (require 'tabbar)
+  (tabbar-mode 1)
+  (require 'fastnav)
+
+  ;;===================================
+;;======My Convenience Features======
+;;===================================
+
+;; increase history
+(setq history-length 100)
+
+;; input method
+(setq default-input-method "english-dvorak")
+
+;; ido mode
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+(setq ido-create-new-buffer 'always)
+(setq ido-use-filename-at-point 'guess)
+
+(setq inhibit-startup-screen t)
+(setq initial-buffer-choice "~/Library/Application Support/Aquamacs Emacs/scratch buffer")
+(setq ns-alternate-modifier (quote meta))
+
+(if (string-match "24" emacs-version) (progn
+					;; (ns-toggle-fullscreen)
+					(show-paren-mode 1)
+					(cua-mode 1)
+					(cua-selection-mode 1)
+					(setq sentence-end-double-space nil)
+))
+
+;; Changes all yes/no questions to y/n type
+(fset 'yes-or-no-p 'y-or-n-p)		;from http://www.codecoffee.com/tipsforlinux/articles/033.html
+(setq show-paren-delay 0)		; show the matching parentheses immediately
+(display-time)				;displays the time in the status bar
+
+;; Cursor
+(blink-cursor-mode 1)
+(setq cursor-type 'box)
+
+;; Keyboard input
+(defadvice switch-to-buffer (after activate-input-method activate) ; dvorak keyboard
+  (activate-input-method "english-dvorak"))
+
+;; recentf
+(setq recentf-save-file "~/.emacs.d/Recent Files.el")
+(recentf-mode 1)
+(setq recentf-max-saved-items 100)
+
+;; visual line mode
+(dolist (hook '(c-mode-hook))
+  (add-hook hook (lambda () (visual-line-mode 0))))
+(global-visual-line-mode 1)
+(auto-fill-mode 0)
+
+;; spell check
+(setq-default ispell-program-name "aspell")
+
+;; smart tab
+(require 'smart-tab)
+;;    (global-smart-tab-mode 1)
+
+;; hooks
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (auto-fill-mode 0))))
+(dolist (hook '(org-mode-hook))
+  (add-hook hook (lambda () (auto-fill-mode 0))))
+(dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode -1))))
+
+(add-hook 'c-mode-common-hook 'flyspell-prog-mode)
+(add-hook 'tcl-mode-hook 'flyspell-prog-mode)
+(defun turn-on-flyspell ()
+   "Force flyspell-mode on using a positive arg.  For use in hooks."
+   (interactive)
+   (flyspell-mode 1))
+
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'org-mode-hook 'visual-line-mode)
+
+(add-hook 'text-mode-hook 'paragraph-indent-minor-mode)
+
+(defun fill-sentence ()
+  (interactive)
+  (save-excursion
+    (or (eq (point) (point-max)) (forward-char))
+    (forward-sentence -1)
+    (indent-relative)
+    (let ((beg (point)))
+      (forward-sentence)
+      (if (equal "LaTeX" (substring mode-name (string-match "LaTeX" mode-name)))
+          (LaTeX-indent-line beg (point))
+          ;; (LaTeX-fill-region-as-paragraph beg (point))
+        (fill-region-as-paragraph beg (point))))))
+
+;;===============
+;;===Kill Ring===
+;;===============
+;; Use C-c y for kill ring popup
+(global-set-key "\C-cy" '(lambda ()
+			   (interactive)
+			   (popup-menu 'yank-menu)))
+
+(when (require 'browse-kill-ring nil 'noerror)
+  (browse-kill-ring-default-keybindings))
+;; M-y key binding will activate browse-kill-ring
+(setq browse-kill-ring-quit-action 'save-and-restore)
+
+
+;; initial modes
+(setq initial-major-mode 'org-mode)
+(setq default-major-mode 'org-mode)
+
+
+  ;; http://www.emacswiki.org/emacs/AutoComplete
+  (add-hook 'c-mode-common-hook '(lambda ()
+                                   ;; ac-omni-completion-sources is made buffer local so
+                                   ;; you need to add it to a mode hook to activate on 
+                                   ;; whatever buffer you want to use it with.  This
+                                   ;; example uses C mode (as you probably surmised).
+                                   ;; auto-complete.el expects ac-omni-completion-sources to be
+                                   ;; a list of cons cells where each cell's car is a regex
+                                   ;; that describes the syntactical bits you want AutoComplete
+                                   ;; to be aware of. The cdr of each cell is the source that will
+                                   ;; supply the completion data.  The following tells autocomplete
+                                   ;; to begin completion when you type in a . or a ->
+                                   (add-to-list 'ac-omni-completion-sources
+                                                (cons "\\." '(ac-source-semantic)))
+                                   (add-to-list 'ac-omni-completion-sources
+                                                (cons "->" '(ac-source-semantic)))
+                                   ;; ac-sources was also made buffer local in new versions of
+                                   ;; autocomplete.  In my case, I want AutoComplete to use 
+                                   ;; semantic and yasnippet (order matters, if reversed snippets
+                                   ;; will appear before semantic tag completions).
+                                   (setq ac-sources '(ac-source-semantic ac-source-yasnippet ac-source-words-in-all-buffer))
+                                   ))
+  
+  (add-hook 'LaTeX-mode-hook '(lambda ()
+                                (add-to-list 'ac-omni-completion-sources
+                                             (cons "\\." '(ac-source-semantic)))
+                                (add-to-list 'ac-omni-completion-sources
+                                             (cons "->" '(ac-source-semantic)))
+                                (setq ac-sources '(ac-source-semantic ac-source-yasnippet ac-source-words-in-all-buffer))
+                                ))
+  
+;;  (setq ac-modes (append ac-modes '(LaTeX/FMPS-mode)))
+;;  (setq ac-modes (append ac-modes '(LaTeX-mode)))
+  
+  
+
+#+end_src
+   
+
+** ido mode
+ido-mode is like magic pixie dust!
+#+srcname: starter-kit-loves-ido-mode
+#+begin_src emacs-lisp 
+(when (> emacs-major-version 21)
+  (ido-mode t)
+  (setq ido-enable-prefix nil
+        ido-enable-flex-matching t
+        ido-create-new-buffer 'always
+        ido-use-filename-at-point t
+        ido-max-prospects 10))
+#+end_src
+
+** Other
+#+begin_src emacs-lisp 
+  (set-default 'indent-tabs-mode nil)
+  (set-default 'indicate-empty-lines t)
+  (set-default 'imenu-auto-rescan t)
+  
+  (add-hook 'text-mode-hook 'turn-on-auto-fill)
+  (add-hook 'text-mode-hook 'turn-on-flyspell)
+  
+  (defvar coding-hook nil
+    "Hook that gets run on activation of any programming mode.")
+  
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (random t) ;; Seed the random-number generator
+#+end_src
+
+*** possible issues/resolutions with flyspell
+Most of the solution came from [[http://www.emacswiki.org/emacs/FlySpell][EmacsWiki-FlySpell]].  Here is one
+possible fix.
+
+**** Emacs set path to aspell
+it's possible aspell isn't in your path
+#+begin_src emacs-lisp :tangle no
+   (setq exec-path (append exec-path '("/opt/local/bin")))
+#+end_src
+
+**** Emacs specify spelling program
+- This didn't work at first, possibly because cocoAspell was
+  building its dictionary.  Now it seems to work fine.
+#+begin_src emacs-lisp :tangle no
+  (setq ispell-program-name "aspell"
+        ispell-dictionary "english"
+        ispell-dictionary-alist
+        (let ((default '("[A-Za-z]" "[^A-Za-z]" "[']" nil
+                         ("-B" "-d" "english" "--dict-dir"
+                          "/Library/Application Support/cocoAspell/aspell6-en-6.0-0")
+                         nil iso-8859-1)))
+          `((nil ,@default)
+            ("english" ,@default))))
+#+end_src
+
+** Hippie expand: at times perhaps too hip
+#+begin_src emacs-lisp
+(delete 'try-expand-line hippie-expand-try-functions-list)
+(delete 'try-expand-list hippie-expand-try-functions-list)
+#+end_src
+
+** Don't clutter up directories with files~
+#+begin_src emacs-lisp
+(setq backup-directory-alist `(("." . ,(expand-file-name
+                                        (concat dotfiles-dir "backups")))))
+#+end_src
+
+** Associate modes with file extensions
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("COMMIT_EDITMSG$" . diff-mode))
+(add-to-list 'auto-mode-alist '("\\.css$" . css-mode))
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\(on\\)?$" . js2-mode))
+;; (add-to-list 'auto-mode-alist '("\\.xml$" . nxml-mode))
+#+end_src
+
+** Default to unified diffs
+#+begin_src emacs-lisp
+(setq diff-switches "-u")
+#+end_src
+
+** Cosmetics
+
+#+begin_src emacs-lisp
+(eval-after-load 'diff-mode
+  '(progn
+     (set-face-foreground 'diff-added "green4")
+     (set-face-foreground 'diff-removed "red3")))
+
+(eval-after-load 'magit
+  '(progn
+     (set-face-foreground 'magit-diff-add "green3")
+     (set-face-foreground 'magit-diff-del "red3")))
+#+end_src

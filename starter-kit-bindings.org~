@@ -59,10 +59,20 @@ My carry-over stuff--influenced by Mac and Aquamacs
 #+begin_src emacs-lisp
   ;  (mapcar (lambda(x)(car(rassq x minor-mode-map-alist)))(current-minor-mode-maps))
   
-  (add-hook 'matlab-mode-hook
-            (lambda ()
-              (define-key matlab-mode-map (kbd "M-;") 'comment-dwim)))
+  (define-key matlab-mode-map (kbd "M-;") 'comment-dwim)
   
+  (defun matlab-set-dwim-comment
+    "Change matlab comment to dwim comment"
+    (interactive)
+    (lambda ()
+       (define-key matlab-mode-map (kbd "M-;") 'comment-dwim)))
+  ;; '(lambda ()
+  ;;    (define-key delphi-mode-map "\C-ch" 'delphi-help)
+  ;;    (define-key delphi-mode-map "\C-c\C-p" 'delphi-after-point)
+  ;;    (define-key delphi-mode-map "\C-c\C-mi" 'delphi-go-to-method-implementation)
+  ;;    (define-key delphi-mode-map "\C-c\C-md" 'delphi-go-to-method-definition)
+  ;;    (define-key delphi-mode-map "\C-c\C-mc" 'delphi-complete-method)
+  ;;    (define-key delphi-mode-map "\C-c\C-p" 'delphi-go-after-point)))
 #+end_src
 ** Lisp Keys
 #+source: lisp keys
@@ -100,9 +110,6 @@ My carry-over stuff--influenced by Mac and Aquamacs
     t " wcb" 'chris-keys-minor-mode-map)
   
   (chris-keys-minor-mode 1)
-  
-  ;;; Org table to Latex
-  (define-key chris-keys-minor-mode-map (kbd "C-c m") 'i-matrixify)
   
   ;; Fastnav
   (define-key chris-keys-minor-mode-map "\M-z" 'zap-up-to-char-forward)

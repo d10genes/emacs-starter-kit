@@ -5,7 +5,95 @@ This is part of the [[file:starter-kit.org][Emacs Starter Kit]].
 
 * Starter Kit Eshell
 [[http://www.emacswiki.org/emacs/CategoryEshell][Eshell]] is a great shell.
+** A table of input commands from [[http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/][here]]
 
+| Syntax   | Description                                                                                     |
+|----------+-------------------------------------------------------------------------------------------------|
+| !!       | Repeats the last command                                                                        |
+| !ls      | Repeats the last command beginning with ls                                                      |
+| !?ls     | Repeats the last command containing ls                                                          |
+| !ls:n    | Extract the nth argument from the last command beginning with ls                                |
+| !ls      | Using pcomplete, show completion results matches ls                                             |
+| ^old^new | Quick substitution. Using the last command, replace old with new and run it again. Maybe buggy. |
+| $_       | Returns the last parameter in the last executed command.                                        |
+
+** My change default prompt
+[[http://www.emacswiki.org/emacs/EshellFunctions#toc7][Emacs wiki]]:
+#+BEGIN_SRC emacs-lisp
+  (defun empty-string? (str)
+    "Test whether a string is empty"
+    (string= "" str))
+  
+  (defun remove-first-empty (lst)
+    "Returns given list with first element removed if it was an empty string"
+    (if (empty-string? (car lst))
+        (cdr lst)
+      lst))
+  
+  (defun strip-space (str)
+    "Returns the original string, minus any trailing spaces"
+    (if (string= " " (substring str -1))
+        (strip-space (substring str 0 -1))
+      str))
+  
+  (defun abbrev-user (str)
+    "Change username to ~ in path name"
+    (let ((un "/Users/FingerMan/"
+              ;; (mapconcat 'identity
+              ;;            (list "/" "Users" (getenv "USER"))"/")
+              ))
+      (if (or (> (length un) (length str))
+              (not (string= (substring str 0 (length un)) un)))
+          str
+        (concat "~/"
+                (substring str (length un) (length str))))))
+  
+  (setq eshell-prompt-function
+        (lambda()
+          (concat ;; (getenv "USER") "@" (getenv "HOST") ":"
+           ((lambda (p-lst vis-depth &optional dir-name-depth)
+              "Given a list p-lst, will display full name (or optionally dir-name-depth characters) of the last vis-depth# directories in the path name, while the remaining directories at the front of the pathname will be abbreviated by their first letter "
+              (if (> (length p-lst) vis-depth)
+                  (concat (mapconcat (lambda (elm)
+                                       (unless (empty-string? elm)
+                                         (substring elm 0 1)))
+                                     (butlast p-lst vis-depth)
+                                     "/")
+                          "/"
+                          (mapconcat (lambda (elm)
+                                       (if (and dir-name-depth
+                                            (> (length elm) dir-name-depth))
+                                           (concat (strip-space (substring elm 0 dir-name-depth)) "..")
+                                         elm))
+                                     (last p-lst vis-depth)
+                                     "/"))
+                (mapconcat 'identity
+                           p-lst
+                           "/")))
+            (split-string (abbrev-user (eshell/pwd)) "/") 2)
+           (if (= (user-uid) 0) " # " "$ "))))
+  
+  (setq eshell-prompt-regexp "^[^#$\n]*[#$] ")
+#+END_SRC
+
+** My aliases
+There are several ways to make aliases. Here are a couple for opening files via eshell.
+Some more tips [[http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/][here]].
+
+
+
+#+BEGIN_SRC emacs-lisp
+  ;; (defalias 'emacs 'find-file)
+  
+  (defun eshell/emacs (file)
+    (find-file file))
+  
+  (defun eshell/ff (file)
+    (find-file file))
+#+END_SRC
+
+
+* Rest
 #+begin_src emacs-lisp
   (setq eshell-cmpl-cycle-completions nil
         eshell-save-history-on-exit t

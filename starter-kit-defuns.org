@@ -3,13 +3,469 @@
 
 This is part of the [[file:starter-kit.org][Emacs Starter Kit]].
 
-* Starter Kit Defuns
+* My Defuns
 Function definitions
 
 #+begin_src emacs-lisp
 (require 'thingatpt)
 (require 'imenu)
 #+end_src
+
+** Transparency
+#+source: transparency
+#+begin_src emacs-lisp
+  (add-to-list 'default-frame-alist '(alpha . (93)))
+
+;; interactive transparency
+(defun transparency-set-initial-value ()
+  "Set initial value of alpha parameter for the current frame"
+  (interactive)
+  (if (equal (frame-parameter nil 'alpha) nil)
+      (set-frame-parameter nil 'alpha 100)))
+
+(defun transparency-set-value (numb)
+  "Set level of transparency for the current frame"
+  (interactive "nEnter transparency level in range 0-100: ")
+  (if (> numb 100)
+      (message "Error! The maximum value for transparency is 100!")
+    (if (< numb 0)
+	(message "Error! The minimum value for transparency is 0!")
+      (set-frame-parameter nil 'alpha numb))))
+
+;; want to get message to pop up telling me what variable it's at
+(defun transparency-increase ()
+  "Increase level of transparency for the current frame"
+  (interactive)
+  (transparency-set-initial-value)
+  (if (> (frame-parameter nil 'alpha) 0)
+      (set-frame-parameter nil 'alpha (+ (frame-parameter nil 'alpha) -3))
+    ;;       (message "Transparency set to ")
+    (message "This is a minimum value of transparency!")))
+
+(defun transparency-decrease ()
+  "Decrease level of transparency for the current frame"
+  (interactive)
+  (transparency-set-initial-value)
+  (if (< (frame-parameter nil 'alpha) 100)
+      (set-frame-parameter nil 'alpha (+ (frame-parameter nil 'alpha) +3))
+    (message "This is a minimum value of transparency!")))
+
+#+end_src
+
+** My Latex matrix conversion defun
+#+BEGIN_SRC emacs-lisp
+  (defun matrixify ()
+    "Converts an org table to a matrix formatted in LaTeX."
+    (interactive)
+    (save-restriction 
+      (narrow-to-region (my-table-top -1) (my-table-top))
+      (goto-char (point-min))
+      (while (search-forward-regexp "|\s*$" nil t) (replace-match "\\\\" nil t))
+      (goto-char (point-min))
+      (while (search-forward-regexp "^|" nil t) (replace-match " " nil t))
+      (goto-char (point-min))
+      (while (search-forward-regexp " | " nil t) (replace-match " & " nil t))
+      (goto-char (point-min))
+      (insert "\\\[ \\left(\n\\begin{matrix}\n")
+      (goto-char (point-max))
+      (insert "\n\\end{matrix}\n\\right) \\\]")
+      (goto-char (point-min))
+      ))
+  
+  (defun i-matrixify (arg)
+    "Converts an org table to a matrix formatted in LaTeX. Takes an argument to specify delimiter: (, [ and |, etc give matrix with respective delimiters, but no environment enclosure (\\[ \\]), while p, b and v, etc. give same delimiters with the environment."
+    (interactive "cEnter desired matrix delimiter: ")
+    (setq end-env "")
+    (setq begin-env "")
+    (cond
+     ((equal (string arg) "|") (setq delim "v"))
+     ((equal (string arg) "(") (setq delim "p"))
+     ((equal (string arg) "[") (setq delim "b"))
+     ((equal (string arg) "{") (setq delim "B"))
+     ((equal (string arg) "=") (setq delim "V"))
+     (t (progn
+          (setq begin-env "\\\[\n")
+          (setq end-env "\n\\\]")
+          (setq delim (string arg)))))
+    (save-restriction 
+      (narrow-to-region (my-table-top -1) (my-table-top))
+      (goto-char (point-min))
+      (while (search-forward-regexp "|\s*$" nil t) (replace-match "\\\\" nil t))
+      (goto-char (point-min))
+      (while (search-forward-regexp "^|" nil t) (replace-match " " nil t))
+      (goto-char (point-min))
+      (while (search-forward-regexp " | " nil t) (replace-match " & " nil t))
+      (goto-char (point-min))
+      (insert (concat begin-env "\\begin{" delim "matrix}\n"))
+      (goto-char (point-max))
+      (insert (concat "\n\\end{" delim "matrix}" end-env))
+      (goto-char (point-min))))
+  
+  (defun my-table-up-line (&optional arg)
+    "Helper function that recursively goes to the beginning of the table if arg is 1 or absent, and to the end of table if -1. Returns final position."
+    (if arg
+        (setq val arg)
+      (setq val 1))
+    (next-line (* -1 val))
+    (if (table-line?)
+        (my-table-up-line val)
+      (beginning-of-line (1+ val)))
+    (unless (>= val 0)
+      (end-of-line))
+    (point))
+  
+  (defun my-table-top (&optional arg)
+    "my-table-up-line function wrapper, which gives error message if command isn't called from within a table"
+    (interactive)
+    (if arg
+        (setq val arg)
+      (setq val 1))
+    ;; (beginning-of-line)
+    (if (table-line?)
+        (my-table-up-line (* 1 val))
+      (message "Not in table")))
+  
+  (defun table-line? ()
+    (save-excursion
+      (beginning-of-line)
+      (equal (string (char-after (point))) "|")))
+  
+  (defun unmatrixify (start end &optional arg)
+    "Converts a LaTeX matrix to an org table"
+    (interactive "r")
+    (if arg
+        (progn
+          (setq val arg)
+          (insert "arg!"))
+      (setq val 2))
+    (save-excursion
+      (save-restriction 
+        (narrow-to-region start end)
+        (goto-char (point-min))
+        (while (search-forward-regexp "\\\\\\{2\\}" nil t) (replace-match "|" nil t))
+        (goto-char (point-min))
+        (while (search-forward-regexp "^ " nil t) (replace-match "| " nil t))
+        (goto-char (point-min))
+        (while (search-forward-regexp " & " nil t) (replace-match " | " nil t))
+        (goto-char (point-min))))
+    (goto-char end)
+    (beginning-of-line val)
+    (kill-line val)
+    (goto-char start)
+    (kill-line (- 0 val)))
+  
+#+END_SRC
+
+** My Python defuns
+
+#+srcname: Python-defuns
+#+begin_src emacs-lisp 
+;; ;; https://github.com/EnigmaCurry/emacs/blob/master/ryan-python.el
+;; ;; http://www.enigmacurry.com/category/emacs/
+;; (require 'python)
+;; (defun prefix-list-elements (list prefix)
+;;   (let (value)
+;;     (nreverse
+;;      (dolist (element list value)
+;;       (setq value (cons (format "%s%s" prefix element) value))))))
+;; 
+;; (defvar ac-source-rope
+;;   '((candidates
+;;      . (lambda ()
+;;          (prefix-list-elements (rope-completions) ac-target))))
+;;   "Source for Rope")
+;; 
+;; (defun ac-python-find ()
+;;   "Python `ac-find-function'."
+;;   (require 'thingatpt)
+;;   (let ((symbol (car-safe (bounds-of-thing-at-point 'symbol))))
+;;     (if (null symbol)
+;;         (if (string= "." (buffer-substring (- (point) 1) (point)))
+;;             (point)
+;;           nil)
+;;       symbol)))
+;; 
+;; (defun ac-python-candidate ()
+;;   "Python `ac-candidates-function'"
+;;   (let (candidates)
+;;     (dolist (source ac-sources)
+;;       (if (symbolp source)
+;;           (setq source (symbol-value source)))
+;;       (let* ((ac-limit (or (cdr-safe (assq 'limit source)) ac-limit))
+;;              (requires (cdr-safe (assq 'requires source)))
+;;              cand)
+;;         (if (or (null requires)
+;;                 (>= (length ac-target) requires))
+;;             (setq cand
+;;                   (delq nil
+;;                         (mapcar (lambda (candidate)
+;;                                   (propertize candidate 'source source))
+;;                                 (funcall (cdr (assq 'candidates source)))))))
+;;         (if (and (> ac-limit 1)
+;;                  (> (length cand) ac-limit))
+;;             (setcdr (nthcdr (1- ac-limit) cand) nil))
+;;         (setq candidates (append candidates cand))))
+;;     (delete-dups candidates)))
+;; 
+;; 
+;; (defun ryan-indent ()
+;;   "Runs indent-for-tab-command but returns t if it actually did an indent; nil otherwise"
+;;   (let ((prev-point (point)))
+;;     (indent-for-tab-command)
+;;     (if (eql (point) prev-point)
+;;         nil
+;;       t)))
+;; 
+;; (defun ryan-python-expand-after-yasnippet ()
+;;   (interactive)
+;;   ;;2) Try indent at beginning of the line
+;;   (let ((prev-point (point))
+;;         (beginning-of-line nil))
+;;     (save-excursion
+;;       (move-beginning-of-line nil)
+;;       (if (eql 0 (string-match "\\W*$" (buffer-substring (point) prev-point)))
+;;           (setq beginning-of-line t)))
+;;     (if beginning-of-line
+;;         (ryan-indent)))
+;;   ;;3) Try autocomplete if at the end of a line, or
+;;   ;;4) Try autocomplete if the next char is not alpha-numerical
+;;   (if (or (string-match "\n" (buffer-substring (point) (+ (point) 1)))
+;;           (not (string-match "[a-zA-Z0-9]" (buffer-substring (point) (+ (point) 1)))))
+;;       (ac-start)
+;;     ;;5) Try a regular indent
+;;     (if (not (ryan-indent))
+;;         ;;6) Try autocomplete at the end of a word
+;;         (if (string-match "\\W" (buffer-substring (point) (+ (point) 1)))
+;;             (ac-start)))))
+;; 
+
+#+end_src
+
+** Xah's change case defun
+#+srcname: Python-defuns
+#+begin_src emacs-lisp 
+;;=================
+;;===CASE TOGGLE===
+;;=================
+;; http://xahlee.org/emacs/modernization_upcase-word.html
+(defun toggle-letter-case ()
+  "Toggle the letter case of current word or text selection.
+Toggles from 3 cases: UPPER CASE, lower case, Title Case,
+in that cyclic order."
+  (interactive)
+
+  (let (pos1 pos2 (deactivate-mark nil) (case-fold-search nil))
+    (if (and transient-mark-mode mark-active)
+        (setq pos1 (region-beginning)
+              pos2 (region-end))
+      (setq pos1 (car (bounds-of-thing-at-point 'word))
+            pos2 (cdr (bounds-of-thing-at-point 'word))))
+
+    (when (not (eq last-command this-command))
+      (save-excursion
+        (goto-char pos1)
+        (cond
+         ((looking-at "[[:lower:]][[:lower:]]") (put this-command 'state "all lower"))
+         ((looking-at "[[:upper:]][[:upper:]]") (put this-command 'state "all caps") )
+         ((looking-at "[[:upper:]][[:lower:]]") (put this-command 'state "init caps") )
+         (t (put this-command 'state "all lower") )
+         )
+        )
+      )
+
+    (cond
+     ((string= "all lower" (get this-command 'state))
+      (upcase-initials-region pos1 pos2) (put this-command 'state "init caps"))
+     ((string= "init caps" (get this-command 'state))
+      (upcase-region pos1 pos2) (put this-command 'state "all caps"))
+     ((string= "all caps" (get this-command 'state))
+      (downcase-region pos1 pos2) (put this-command 'state "all lower"))
+     )
+    )
+  )
+#+end_src
+
+** Buffer-related
+
+#+srcname: starter-kit-ido-imenu
+#+begin_src emacs-lisp 
+  (defun ido-imenu ()
+    "Update the imenu index and then use ido to select a symbol to navigate to.
+  Symbols matching the text at point are put first in the completion list."
+    (interactive)
+    (imenu--make-index-alist)
+    (let ((name-and-pos '())
+          (symbol-names '()))
+      (flet ((addsymbols (symbol-list)
+                         (when (listp symbol-list)
+                           (dolist (symbol symbol-list)
+                             (let ((name nil) (position nil))
+                               (cond
+                                ((and (listp symbol) (imenu--subalist-p symbol))
+                                 (addsymbols symbol))
+                                
+                                ((listp symbol)
+                                 (setq name (car symbol))
+                                 (setq position (cdr symbol)))
+                                
+                                ((stringp symbol)
+                                 (setq name symbol)
+                                 (setq position (get-text-property 1 'org-imenu-marker symbol))))
+                               
+                               (unless (or (null position) (null name))
+                                 (add-to-list 'symbol-names name)
+                                 (add-to-list 'name-and-pos (cons name position))))))))
+        (addsymbols imenu--index-alist))
+      ;; If there are matching symbols at point, put them at the beginning of `symbol-names'.
+      (let ((symbol-at-point (thing-at-point 'symbol)))
+        (when symbol-at-point
+          (let* ((regexp (concat (regexp-quote symbol-at-point) "$"))
+                 (matching-symbols (delq nil (mapcar (lambda (symbol)
+                                                       (if (string-match regexp symbol) symbol))
+                                                     symbol-names))))
+            (when matching-symbols
+              (sort matching-symbols (lambda (a b) (> (length a) (length b))))
+              (mapc (lambda (symbol) (setq symbol-names (cons symbol (delete symbol symbol-names))))
+                    matching-symbols)))))
+      (let* ((selected-symbol (ido-completing-read "Symbol? " symbol-names))
+             (position (cdr (assoc selected-symbol name-and-pos))))
+        (goto-char position))))
+#+end_src
+
+** Yank ring auto-indent
+#+source: yank-ring-auto-indent
+#+begin_src emacs-lisp
+
+(defvar yank-indent-modes '(emacs-lisp-mode
+                            c-mode c++-mode
+                            tcl-mode sql-mode
+                            perl-mode cperl-mode
+                            java-mode jde-mode
+                            lisp-interaction-mode
+                            LaTeX-mode TeX-mode)
+  "Modes in which to indent regions that are yanked (or yank-popped)")
+
+(defvar yank-advised-indent-threshold 1000
+  "Threshold (# chars) over which indentation does not automatically occur.")
+
+(defun yank-advised-indent-function (beg end)
+  "Do indentation, as long as the region isn't too large."
+  (if (<= (- end beg) yank-advised-indent-threshold)
+      (indent-region beg end nil)))
+
+(defadvice yank (after yank-indent activate)
+  "If current mode is one of 'yank-indent-modes, indent yanked text (with prefix arg don't indent)."
+  (if (and (not (ad-get-arg 0))
+           (member major-mode yank-indent-modes))
+      (let ((transient-mark-mode nil))
+    (yank-advised-indent-function (region-beginning) (region-end)))))
+
+(defadvice yank-pop (after yank-pop-indent activate)
+  "If current mode is one of 'yank-indent-modes, indent yanked text (with prefix arg don't indent)."
+  (if (and (not (ad-get-arg 0))
+           (member major-mode yank-indent-modes))
+    (let ((transient-mark-mode nil))
+    (yank-advised-indent-function (region-beginning) (region-end)))))
+
+#+end_src
+
+** Resize frames and navigating
+#+source: resize-and-scroll
+#+begin_src emacs-lisp
+  
+;;===============================
+;;===Resize windows and frames===
+;;===============================
+;; some kbd mixup with aquamacs
+(defun gcm-scroll-down ()
+  (interactive)
+  (View-scroll-line-forward 9))
+(defun gcm-scroll-up ()
+  (interactive)
+  (View-scroll-line-backward 9))
+
+(defun big-move-down ()
+  (interactive)
+  (next-line 9))
+(defun big-move-up ()
+  (interactive)
+  (previous-line 9))
+#+end_src
+
+** Insert date and time
+#+source: date-and-time
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c d") 'insert-date)
+
+(defun insert-date (prefix)
+  "Insert the current date. With prefix-argument, use ISO format. With
+   two prefix arguments, write out the day and month name."
+  (interactive "P")
+  (let ((format (cond
+		 ((not prefix) "%d %B %Y")
+		 ((equal prefix '(4)) "%Y-%m-%d")
+		 ((equal prefix '(16)) "%A, %d. %B %Y")))
+	(system-time-locale "en_EN"))
+    (insert (format-time-string format))))
+#+end_src
+
+** Copy lines, etc
+#+source: various-things
+#+begin_src emacs-lisp
+  
+(defun select-next-window ()
+  "Switch to the next window" 
+  (interactive)
+  (select-window (next-window)))
+
+(defun select-previous-window ()
+  "Switch to the previous window" 
+  (interactive)
+  (select-window (previous-window)))
+
+					;(add-hook 'org-mode 'color-theme-inkpot)
+;;when you try and do ^/_, it automatically includes braces
+(setq TeX-electric-sub-and-superscript 1)
+;;insert double "{}", hit C-c {
+;;typset: C-c C-c
+
+(add-hook 'paragraph-indent-text-mode-hook '(lambda ()
+					      (local-set-key (kbd "RET") 'newline)))
+					;(setq left-margin 0)
+
+(defun copy-line (&optional arg)
+  "Do a kill-line but copy rather than kill.  This function directly calls
+    kill-line, so see documentation of kill-line for how to use it including prefix
+    argument and relevant variables.  This function works by temporarily making the
+    buffer read-only."
+  (interactive "P")
+  (let ((buffer-read-only t)
+	(kill-read-only-ok t))
+    (kill-line arg)))
+;; optional key binding
+;;    (global-set-key "\C-c\C-k" 'copy-line)
+
+(defun copy-whole-line (&optional arg)
+  "Do a kill-line but copy rather than kill.  This function directly calls
+    kill-line, so see documentation of kill-line for how to use it including prefix
+    argument and relevant variables.  This function works by temporarily making the
+    buffer read-only."
+  (interactive "P")
+  (let ((buffer-read-only t)
+	(kill-read-only-ok t))
+    (kill-whole-line arg)))
+
+;; Count buffers in Emacs
+(defun count-buffers (&optional display-anyway)
+  "Display or return the number of buffers."
+  (interactive)
+  (let ((buf-count (length (buffer-list))))
+    (if (or (interactive-p) display-anyway)
+    (message "%d buffers in this Emacs" buf-count)) buf-count))
+
+#+end_src
+
+
 
 ** Network
 

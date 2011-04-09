@@ -17,6 +17,50 @@ Support for editing list dialects including [[* Emacs Lisp][Emacs Lisp]], [[* Sc
 (define-key lisp-mode-shared-map (kbd "C-c v") 'eval-buffer)
 #+end_src
 
+** Auto-pair mode
+#+source: auto-pair
+#+begin_src emacs-lisp
+  (require 'autopair)
+  (autopair-global-mode) ;; to enable in all buffers
+  ;; (autopair-global-mode 0)
+  ;; http://code.google.com/p/autopair/issues/detail?id=32&q=slime
+  (add-hook 'slime-repl-mode-hook #'(lambda () (autopair-global-mode 0)))
+  (add-hook 'slime-repl-mode-hook #'(lambda () (setq autopair-dont-activate t)))
+  ;; (add-hook 'comint-mode-hook #'(lambda () (setq autopair-dont-activate 0)))
+  (add-hook 'sldb-mode-hook #'(lambda () (setq autopair-dont-activate t)))
+  (add-hook 'sldb-mode-hook (autopair-mode 0))
+  (add-hook 'slime-mode-hook #'(lambda () (setq autopair-dont-activate t)))
+  (add-hook 'slime-mode-hook (autopair-mode 0))
+  
+  ;; (add-hook 'sldb-mode-hook #'(lambda () (setq autopair-dont-activate t)))
+  
+  ;; These things from the answer: http://stackoverflow.com/questions/3987489/is-it-possible-to-auto-complete-parentheses-or-quotation-marks-in-emacs
+  (setq skeleton-pair t)
+  (defvar skeletons-alist
+    '((?\( . ?\))
+      (?\" . ?\")
+      (?[  . ?])
+      (?{  . ?})
+      (?$  . ?$)))
+  
+  (defadvice delete-backward-char (before delete-empty-pair activate)
+    (if (eq (cdr (assq (char-before) skeletons-alist)) (char-after))
+        (and (char-after) (delete-char 1))))
+  
+  (defadvice backward-kill-word (around delete-pair activate)
+    (if (eq (char-syntax (char-before)) ?\()
+        (progn
+          (backward-char 1)
+          (save-excursion
+            (forward-sexp 1)
+            (delete-char -1))
+          (forward-char 1)
+          (append-next-kill)
+          (kill-backward-chars 1))
+      ad-do-it))
+        
+#+end_src
+
 ** Paredit
    [[http://www.emacswiki.org/emacs/ParEdit][Paredit]] might seem weird at first, but it really makes writing lisp a
    much more comfortable experience.  This is especially useful in
@@ -24,8 +68,24 @@ Support for editing list dialects including [[* Emacs Lisp][Emacs Lisp]], [[* Sc
    back, =C-M-u= up, =C-M-d= down)
 
 #+begin_src emacs-lisp
+(require 'paredit)
+
 (defun turn-on-paredit ()
   (paredit-mode +1))
+
+(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+; (add-hook 'org-mode-hook (lambda () (paredit-mode +1)))
+(add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
+(add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
+(add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
+
+;; Stop SLIME's REPL from grabbing DEL,
+;; which is annoying when backspacing over a '('
+;  (defun override-slime-repl-bindings-with-paredit ()
+;    (define-key slime-repl-mode-map
+;      (read-kbd-macro paredit-backward-delete-key) nil))
+;  (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+
 #+end_src
 
   : ;; (eval-after-load 'paredit
@@ -62,6 +122,35 @@ Support for editing list dialects including [[* Emacs Lisp][Emacs Lisp]], [[* Sc
 
 (font-lock-add-keywords 'emacs-lisp-mode
 			'(("(\\|)" . 'esk-paren-face)))
+#+end_src
+
+** SLIME
+#+source: Slime 
+#+begin_src emacs-lisp
+  ;; http://www.cliki.net/SLIME%20Tips
+  ;; (add-hook 'slime-mode-hook
+  ;;           (lambda ()
+  ;;             (unless (slime-connected-p)
+  ;;               (save-excursion (slime)))))
+  
+  ;; (defun cliki:start-slime ()
+  ;;   (unless (slime-connected-p)
+  ;;     (save-excursion (slime))))
+  
+  ;; (add-hook 'slime-mode-hook 'cliki:start-slime)
+  
+  ;;  (slime-setup '(slime-fancy slime-asdf))
+  ;; http://functionalrants.wordpress.com/2008/09/06/how-to-set-up-emacs-slime-sbcl-under-gnulinux/
+  ;; Set up the Common Lisp environment
+  ;; (add-to-list 'load-path "/usr/share/common-lisp/source/slime/")
+  ;; /Users/FingerMan/quicklisp/dists/quicklisp/software/slime-20110219-cvs
+  (add-to-list 'load-path "/Users/FingerMan/quicklisp/dists/quicklisp/software/slime-20110219-cvs")
+  (setq inferior-lisp-program "/usr/local/bin/sbcl")
+  (require 'slime-autoloads)
+  (slime-setup)
+  
+  ;;  (setq inferior-lisp-program "sbcl")
+  (load (expand-file-name "~/quicklisp/slime-helper.el"))
 #+end_src
 
 ** Clojure
@@ -176,15 +265,21 @@ idea to extend this feature beyond simply the =fn= function.
 ** Scheme
 
 #+begin_src emacs-lisp
-(add-hook 'scheme-mode-hook 'run-coding-hook)
-;; (add-hook 'scheme-mode-hook 'idle-highlight)
-(font-lock-add-keywords 'scheme-mode
-			'(("(\\|)" . 'esk-paren-face)))
+  ;; http://deaddeadgood.com/2010/11/18/mit-scheme-in-emacs-on-os-x/
+  ;; MIT Scheme
+  (setenv "MITSCHEME_LIBRARY_PATH"  "/Applications/mit-scheme.app/Contents/Resources")
+
+  (require 'quack)
+  (add-hook 'scheme-mode-hook 'run-coding-hook)
+  ;; (add-hook 'scheme-mode-hook 'idle-highlight)
+  (font-lock-add-keywords 'scheme-mode
+              '(("(\\|)" . 'esk-paren-face)))
 #+end_src
 
 ** Common Lisp
 
 #+begin_src emacs-lisp
+
 (add-hook 'lisp-mode-hook 'run-coding-hook)
 ;; (add-hook 'lisp-mode-hook 'idle-highlight)
 (add-hook 'lisp-mode-hook 'turn-on-paredit)

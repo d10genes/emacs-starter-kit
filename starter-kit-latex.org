@@ -9,6 +9,11 @@ This is part of the [[file:starter-kit.org][Emacs Starter Kit]].
 ** Load Packages
 *** Load AucTeX
 #+begin_src emacs-lisp
+  (add-to-list 'load-path (concat dotfiles-dir "/src/auctex/"))
+  (add-to-list 'load-path (concat dotfiles-dir "/src/auctex/preview"))
+  ;; (add-to-list 'load-path "~/elisp")
+  (add-to-list 'load-path "/Applications/Emacs.app/Contents/Resources/site-lisp/")
+  
   (load "auctex.el" nil t t)
 #+end_src
 

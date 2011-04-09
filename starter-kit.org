@@ -69,9 +69,13 @@ The [[http://emacswiki.org][Emacs Wiki]] is also very handy.
    #+end_src
 6. build [[http://www.gnu.org/software/auctex/][auctex]] -- for instilllation help see the [[http://www.gnu.org/software/auctex/manual/auctex/Installation.html#Installation][auctex instillation
    instructions]], auctex requires a working TeX installation
+
    #+begin_src sh
-   cd src/auctex
-   ./configure && make
+     cd src/auctex
+     # ./configure && make
+     # I used
+     ./configure -with-emacs=/Applications/Emacs.app/Contents/MacOS/Emacs --with-lispdir=/Applications/Emacs.app/Contents/Resources/site-lisp --with-texmf-dir=/usr/local/texlive/texmf-local && make
+     
    #+end_src
 7. Launch Emacs!
 
@@ -260,7 +264,6 @@ This section contains all code implementing the Emacs Starter Kit.
   (add-to-list 'load-path dotfiles-dir)
   (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
   (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
-  
   (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
   (setq package-user-dir (concat dotfiles-dir "elpa"))
   (setq custom-file (concat dotfiles-dir "custom.el"))
@@ -420,6 +423,141 @@ These sections pertain to specific languages or modes.  Feel free to
 turn off these sections if you don't plan on using the related mode or
 language.
 
+*** Matlab
+#+source: matlab
+#+begin_src emacs-lisp
+  (add-to-list 'load-path (concat dotfiles-dir "/src/matlab-emacs-super/matlab-emacs/"))
+  (load-library "matlab-load")
+#+end_src
+
+*** W3M Mode
+Right now just loading it up for Anything.el
+#+source: w3m
+#+begin_src emacs-lisp
+  ;; (add-to-list 'load-path (concat dotfiles-dir "/src/emacs-w3m"))
+  ;; (require 'w3m)
+#+end_src
+
+*** Anything mode
+#+begin_src emacs-lisp
+  (require 'anything-config)
+  (require 'anything)
+  
+  ;; trying to get it to search jabber contacts
+  ;; http://groups.google.co.uk/group/gnu.emacs.sources/msg/84a9e5fb0139af61
+  (defun my-jabber-list-contacts (&optional subset require-match default resource) 
+    "List Jabber contacts. 
+   This is a blatant copy-paste from `jabber-chat-with' with some 
+   code removed." 
+    (let ((jid-at-point (or 
+                         (and default 
+                              ;; default can be either a symbol or a string 
+                              (if (symbolp default) 
+                                  (symbol-name default) 
+                                default)) 
+                         (get-text-property (point) 'jabber-jid) 
+                         (bound-and-true-p jabber-chatting-with) 
+                         (bound-and-true-p jabber-group))) 
+          (completion-ignore-case t) 
+          (jid-completion-table (mapcar #'(lambda (item) 
+                                            (cons (symbol-name item) item)) 
+                                        (or subset (jabber-concat-rosters)))) 
+          chosen) 
+      (dolist (item (or subset (jabber-concat-rosters))) 
+        (if (get item 'name) 
+            (push (cons (get item 'name) item) jid-completion-table))) 
+      ;; if the default is not in the allowed subset, it's not a good default 
+      (if (and subset (not (assoc jid-at-point jid-completion-table))) 
+          (setq jid-at-point nil)) 
+      jid-completion-table))
+#+end_src
+
+
+*** Auto-complete mode
+#+source: auto complete
+#+begin_src emacs-lisp
+  (add-to-list 'load-path (concat dotfiles-dir "/src/auto-complete/"))
+  (require 'auto-complete-config)
+  (add-to-list 'ac-dictionary-directories "~/.emacs.d/src/auto-complete/dict/")
+  
+  
+  (ac-config-default)
+                                          ; (ac-flyspell-workaround) i believe this is redundant in config file
+  ;; dirty fix for having AC everywhere
+  (define-globalized-minor-mode real-global-auto-complete-mode
+    auto-complete-mode (lambda ()
+                         (if (not (minibufferp (current-buffer)))
+                             (auto-complete-mode 1))
+                         ))
+  (real-global-auto-complete-mode t)
+  (real-global-auto-complete-mode 0)
+  
+  ;;; Slime with auto-complete
+  (require 'ac-slime)
+  (add-hook 'slime-mode-hook 'set-up-slime-ac)
+  (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+#+end_src
+
+*** Fastnav package
+#+source: fast-nav
+#+begin_src emacs-lisp
+  (require 'fastnav)
+#+end_src
+
+*** Tab-bar
+#+source: Tab bar
+#+begin_src emacs-lisp
+  (require 'tabbar)
+  (tabbar-mode 1)
+  
+  ;; (defun tabbar-buffer-groups ()
+  ;;   "Return the list of group names the current buffer belongs to.
+  ;;  This function is a custom function for tabbar-mode's tabbar-buffer-groups.
+  ;;  This function group all buffers into 3 groups:
+  ;;  Those Dired, those user buffer, and those emacs buffer.
+  ;;  Emacs buffer are those starting with “*”."
+  ;;   (list
+  ;;    (cond
+  ;;     ((string-equal "*" (substring (buffer-name) 0 1))
+  ;;      '("Emacs Buffer")
+  ;;      )
+  ;;     ((eq major-mode 'dired-mode)
+  ;;      '("Dired")
+  ;;      )
+  ;;     (t
+  ;;      '("User Buffer")
+  ;;      )
+  ;;     ))) ;; from Xah Lee
+  
+  ;; (setq tabbar-buffer-groups-function 'tabbar-buffer-groups)
+  
+  ;; (defun tabbar-buffer-groups (buffer)
+  ;;   "Return the list of group names BUFFER belongs to.
+  ;; Return only one group for each buffer."
+  ;;   (with-current-buffer (get-buffer buffer)
+  ;;     (cond
+  ;;      ((string-equal "*" (substring (buffer-name) 0 1))
+  ;;       '("Emacs Buffer"))
+  ;;      ((eq major-mode 'dired-mode)
+  ;;       '("Dired"))
+  ;;      (t
+  ;;       '("User Buffer"))
+  ;;      )))
+  
+#+end_src
+
+#+results: Tab
+: tabbar-buffer-groups
+
+*** Aquamacs tabbar
+#+source: Aquatabs
+#+begin_src emacs-lisp
+  ;; (require 'aquamacs-tabbar)
+  ;; (require 'aquamacs-tools)
+  ;; (require 'tabbar)
+  ;; (require 'tabbar-window)
+#+end_src
+
 *** Starter kit yasnippet
 [[http://code.google.com/p/yasnippet/][yasnippet]] is yet another snippet expansion system for Emacs.  It is
 inspired by TextMate's templating syntax.
@@ -434,6 +572,7 @@ load the yasnippet bundle
                                                     dotfiles-dir)))
   (require 'yasnippet)
   (yas/initialize)
+
 #+end_src
 
 load the snippets defined in the =./snippets/= directory
@@ -501,7 +640,7 @@ Located in [[file:starter-kit-python.org][starter-kit-python]]
 Located in [[file:starter-kit-latex.org][starter-kit-latex]]
 
 #+begin_src emacs-lisp
-;; (starter-kit-load "starter-kit-latex.org")
+ (starter-kit-load "starter-kit-latex.org")
 #+end_src
 
 ** Load User/System Specific Files
@@ -530,7 +669,6 @@ After we've loaded all the Starter Kit defaults, lets load the User's stuff.
       (mapc #'org-babel-load-file (directory-files user-specific-dir nil ".*org$"))))
 #+end_src
 
-
 * FAQ
   :PROPERTIES:
   :tangle:   no
@@ -555,7 +693,7 @@ these instructions.
 1) =org-install.el= is required by the starter kit. To make it,
    navigate to the =src/org= directory and enter =make
    lisp/org-install.el= at the command prompt.
-2) Updating the documentation is probably a good idea. Enter =make
+2 Updating the documentation is probably a good idea. Enter =make
    info=. Optionally, you can update the system-wide org documentation
    by entering =make install-info=. If you want a PDF version of the
    manual, you can enter =make doc/org.pdf= and find the resulting

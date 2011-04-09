@@ -1,5 +1,6 @@
 #contributor : Rodrigo Setti <rodrigosetti@gmail.com>
-#name : \begin{environment} ... \end{environment}
+#name : \begin(2){environment} ... \end{environment}
+# key : begind
 # --
 
 \begin{${1:environment}}
