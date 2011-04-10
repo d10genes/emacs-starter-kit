@@ -12,7 +12,7 @@ Function definitions
 #+end_src
 
 ** Transparency
-#+source: transparency
+Functions to interactively modify Emacs transparency.
 #+begin_src emacs-lisp
   (add-to-list 'default-frame-alist '(alpha . (93)))
 
@@ -157,132 +157,57 @@ Function definitions
 #+END_SRC
 
 ** My Python defuns
-
+Former python defuns.
 #+srcname: Python-defuns
 #+begin_src emacs-lisp 
-;; ;; https://github.com/EnigmaCurry/emacs/blob/master/ryan-python.el
-;; ;; http://www.enigmacurry.com/category/emacs/
-;; (require 'python)
-;; (defun prefix-list-elements (list prefix)
-;;   (let (value)
-;;     (nreverse
-;;      (dolist (element list value)
-;;       (setq value (cons (format "%s%s" prefix element) value))))))
-;; 
-;; (defvar ac-source-rope
-;;   '((candidates
-;;      . (lambda ()
-;;          (prefix-list-elements (rope-completions) ac-target))))
-;;   "Source for Rope")
-;; 
-;; (defun ac-python-find ()
-;;   "Python `ac-find-function'."
-;;   (require 'thingatpt)
-;;   (let ((symbol (car-safe (bounds-of-thing-at-point 'symbol))))
-;;     (if (null symbol)
-;;         (if (string= "." (buffer-substring (- (point) 1) (point)))
-;;             (point)
-;;           nil)
-;;       symbol)))
-;; 
-;; (defun ac-python-candidate ()
-;;   "Python `ac-candidates-function'"
-;;   (let (candidates)
-;;     (dolist (source ac-sources)
-;;       (if (symbolp source)
-;;           (setq source (symbol-value source)))
-;;       (let* ((ac-limit (or (cdr-safe (assq 'limit source)) ac-limit))
-;;              (requires (cdr-safe (assq 'requires source)))
-;;              cand)
-;;         (if (or (null requires)
-;;                 (>= (length ac-target) requires))
-;;             (setq cand
-;;                   (delq nil
-;;                         (mapcar (lambda (candidate)
-;;                                   (propertize candidate 'source source))
-;;                                 (funcall (cdr (assq 'candidates source)))))))
-;;         (if (and (> ac-limit 1)
-;;                  (> (length cand) ac-limit))
-;;             (setcdr (nthcdr (1- ac-limit) cand) nil))
-;;         (setq candidates (append candidates cand))))
-;;     (delete-dups candidates)))
-;; 
-;; 
-;; (defun ryan-indent ()
-;;   "Runs indent-for-tab-command but returns t if it actually did an indent; nil otherwise"
-;;   (let ((prev-point (point)))
-;;     (indent-for-tab-command)
-;;     (if (eql (point) prev-point)
-;;         nil
-;;       t)))
-;; 
-;; (defun ryan-python-expand-after-yasnippet ()
-;;   (interactive)
-;;   ;;2) Try indent at beginning of the line
-;;   (let ((prev-point (point))
-;;         (beginning-of-line nil))
-;;     (save-excursion
-;;       (move-beginning-of-line nil)
-;;       (if (eql 0 (string-match "\\W*$" (buffer-substring (point) prev-point)))
-;;           (setq beginning-of-line t)))
-;;     (if beginning-of-line
-;;         (ryan-indent)))
-;;   ;;3) Try autocomplete if at the end of a line, or
-;;   ;;4) Try autocomplete if the next char is not alpha-numerical
-;;   (if (or (string-match "\n" (buffer-substring (point) (+ (point) 1)))
-;;           (not (string-match "[a-zA-Z0-9]" (buffer-substring (point) (+ (point) 1)))))
-;;       (ac-start)
-;;     ;;5) Try a regular indent
-;;     (if (not (ryan-indent))
-;;         ;;6) Try autocomplete at the end of a word
-;;         (if (string-match "\\W" (buffer-substring (point) (+ (point) 1)))
-;;             (ac-start)))))
-;; 
-
+  ;; https://github.com/EnigmaCurry/emacs/blob/master/ryan-python.el
+  ;; http://www.enigmacurry.com/category/emacs/
 #+end_src
 
 ** Xah's change case defun
 #+srcname: Python-defuns
 #+begin_src emacs-lisp 
-;;=================
-;;===CASE TOGGLE===
-;;=================
-;; http://xahlee.org/emacs/modernization_upcase-word.html
-(defun toggle-letter-case ()
-  "Toggle the letter case of current word or text selection.
-Toggles from 3 cases: UPPER CASE, lower case, Title Case,
-in that cyclic order."
-  (interactive)
-
-  (let (pos1 pos2 (deactivate-mark nil) (case-fold-search nil))
-    (if (and transient-mark-mode mark-active)
-        (setq pos1 (region-beginning)
-              pos2 (region-end))
-      (setq pos1 (car (bounds-of-thing-at-point 'word))
-            pos2 (cdr (bounds-of-thing-at-point 'word))))
-
-    (when (not (eq last-command this-command))
-      (save-excursion
-        (goto-char pos1)
-        (cond
-         ((looking-at "[[:lower:]][[:lower:]]") (put this-command 'state "all lower"))
-         ((looking-at "[[:upper:]][[:upper:]]") (put this-command 'state "all caps") )
-         ((looking-at "[[:upper:]][[:lower:]]") (put this-command 'state "init caps") )
-         (t (put this-command 'state "all lower") )
-         )
+  
+  ;;=================
+  ;;===CASE TOGGLE===
+  ;;=================
+  ;; http://xahlee.org/emacs/modernization_upcase-word.html
+  
+  (defun toggle-letter-case ()
+    "Toggle the letter case of current word or text selection.
+  Toggles from 3 cases: UPPER CASE, lower case, Title Case,
+  in that cyclic order."
+    (interactive)
+  
+    (let (pos1 pos2 (deactivate-mark nil) (case-fold-search nil))
+      (if (and transient-mark-mode mark-active)
+          (setq pos1 (region-beginning)
+                pos2 (region-end))
+        (setq pos1 (car (bounds-of-thing-at-point 'word))
+              pos2 (cdr (bounds-of-thing-at-point 'word))))
+  
+      (when (not (eq last-command this-command))
+        (save-excursion
+          (goto-char pos1)
+          (cond
+           ((looking-at "[[:lower:]][[:lower:]]") (put this-command 'state "all lower"))
+           ((looking-at "[[:upper:]][[:upper:]]") (put this-command 'state "all caps") )
+           ((looking-at "[[:upper:]][[:lower:]]") (put this-command 'state "init caps") )
+           (t (put this-command 'state "all lower") )
+           )
+          )
         )
+  
+      (cond
+       ((string= "all lower" (get this-command 'state))
+        (upcase-initials-region pos1 pos2) (put this-command 'state "init caps"))
+       ((string= "init caps" (get this-command 'state))
+        (upcase-region pos1 pos2) (put this-command 'state "all caps"))
+       ((string= "all caps" (get this-command 'state))
+        (downcase-region pos1 pos2) (put this-command 'state "all lower"))
+       )
       )
-
-    (cond
-     ((string= "all lower" (get this-command 'state))
-      (upcase-initials-region pos1 pos2) (put this-command 'state "init caps"))
-     ((string= "init caps" (get this-command 'state))
-      (upcase-region pos1 pos2) (put this-command 'state "all caps"))
-     ((string= "all caps" (get this-command 'state))
-      (downcase-region pos1 pos2) (put this-command 'state "all lower"))
-     )
     )
-  )
 #+end_src
 
 ** Buffer-related
