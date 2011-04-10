@@ -160,6 +160,7 @@ Give me Dvorak or give me death
     (activate-input-method "english-dvorak"))
   
   (add-hook 'org-src-mode-hook 'toggle-input-method)
+  (add-hook 'eshell-mode-hook 'toggle-input-method)
 #+end_src
 
 ** Anything mode and random crap
