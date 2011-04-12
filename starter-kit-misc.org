@@ -17,6 +17,18 @@ This is part of the [[file:starter-kit.org][Emacs Starter Kit]].
 * Starter Kit Misc
 Things that don't fit anywhere else.
 
+** System type defun
+   #+begin_src emacs-lisp
+     ;; Check if system is Mac
+     
+     ;; Check if system is gnu/linux
+     (defun system-type-is-gnu ()
+       (interactive)
+       "Return true if system is GNU/Linux-based"
+       (string-equal system-type "gnu/linux"))
+                     
+   #+end_src
+
 ** Sentences and tabs
    #+source: sentences
    #+begin_src emacs-lisp
@@ -63,7 +75,8 @@ will load the =railscasts= color theme when Emacs starts.
    Set the font size to a bearable one:
    #+source: Font
    #+begin_src emacs-lisp
-     (set-face-attribute 'default nil :font "Menlo" :height 150)
+     (unless (system-type-is-gnu)
+       (set-face-attribute 'default nil :font "Menlo" :height 150))
    #+end_src
 
 ** Window system stuff
