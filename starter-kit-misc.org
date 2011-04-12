@@ -1,18 +1,14 @@
-#+TITLE: Starter Kit Misc
+c#+TITLE: Starter Kit Misc
 #+OPTIONS: toc:nil num:nil ^:nil
 
 This is part of the [[file:starter-kit.org][Emacs Starter Kit]].
 
 ** Stuff to do:
-   - [ ] visual line mode without auto-fill
-   - [ ] dvorak hook
-   - [ ] anything mode
-   - [ ] tabbar
-   - [X] paredit
-   - [X] super + for font
-   - [X] transparency defun
-   - [X] blinking
-
+   - [ ] set font sizes for each system
+   - [ ] change cursor to line
+   - [ ] matlab-load
+   - [ ] anything (bring to git)
+   - [ ] generalize eshell prompt for nix
 
 * Starter Kit Misc
 Things that don't fit anywhere else.
@@ -191,7 +187,8 @@ Give me Dvorak or give me death
   ;(setq ido-use-filename-at-point 'guess)
   
   (setq inhibit-startup-screen t)
-  (setq initial-buffer-choice "~/Library/Application Support/Aquamacs Emacs/scratch buffer")
+  (unless (system-type-is-gnu)
+    (setq initial-buffer-choice "~/Library/Application Support/Aquamacs Emacs/scratch buffer"))
   (setq ns-alternate-modifier (quote meta))
   
   (if (string-match "24" emacs-version) (progn

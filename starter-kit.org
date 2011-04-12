@@ -422,142 +422,6 @@ Registers for jumping to commonly used files in [[file:starter-kit-registers.org
 These sections pertain to specific languages or modes.  Feel free to
 turn off these sections if you don't plan on using the related mode or
 language.
-
-*** Matlab
-#+source: matlab
-#+begin_src emacs-lisp
-  (add-to-list 'load-path (concat dotfiles-dir "/src/matlab-emacs-super/matlab-emacs/"))
-  (load-library "matlab-load")
-#+end_src
-
-*** W3M Mode
-Right now just loading it up for Anything.el
-#+source: w3m
-#+begin_src emacs-lisp
-  ;; (add-to-list 'load-path (concat dotfiles-dir "/src/emacs-w3m"))
-  ;; (require 'w3m)
-#+end_src
-
-*** Anything mode
-#+begin_src emacs-lisp
-  (require 'anything-config)
-  (require 'anything)
-  
-  ;; trying to get it to search jabber contacts
-  ;; http://groups.google.co.uk/group/gnu.emacs.sources/msg/84a9e5fb0139af61
-  (defun my-jabber-list-contacts (&optional subset require-match default resource) 
-    "List Jabber contacts. 
-   This is a blatant copy-paste from `jabber-chat-with' with some 
-   code removed." 
-    (let ((jid-at-point (or 
-                         (and default 
-                              ;; default can be either a symbol or a string 
-                              (if (symbolp default) 
-                                  (symbol-name default) 
-                                default)) 
-                         (get-text-property (point) 'jabber-jid) 
-                         (bound-and-true-p jabber-chatting-with) 
-                         (bound-and-true-p jabber-group))) 
-          (completion-ignore-case t) 
-          (jid-completion-table (mapcar #'(lambda (item) 
-                                            (cons (symbol-name item) item)) 
-                                        (or subset (jabber-concat-rosters)))) 
-          chosen) 
-      (dolist (item (or subset (jabber-concat-rosters))) 
-        (if (get item 'name) 
-            (push (cons (get item 'name) item) jid-completion-table))) 
-      ;; if the default is not in the allowed subset, it's not a good default 
-      (if (and subset (not (assoc jid-at-point jid-completion-table))) 
-          (setq jid-at-point nil)) 
-      jid-completion-table))
-#+end_src
-
-
-*** Auto-complete mode
-#+source: auto complete
-#+begin_src emacs-lisp
-  (add-to-list 'load-path (concat dotfiles-dir "/src/auto-complete/"))
-  (require 'auto-complete-config)
-  (add-to-list 'ac-dictionary-directories "~/.emacs.d/src/auto-complete/dict/")
-  
-  
-  (ac-config-default)
-                                          ; (ac-flyspell-workaround) i believe this is redundant in config file
-  ;; dirty fix for having AC everywhere
-  (define-globalized-minor-mode real-global-auto-complete-mode
-    auto-complete-mode (lambda ()
-                         (if (not (minibufferp (current-buffer)))
-                             (auto-complete-mode 1))
-                         ))
-  (real-global-auto-complete-mode t)
-  (real-global-auto-complete-mode 0)
-  
-  ;;; Slime with auto-complete
-  (require 'ac-slime)
-  (add-hook 'slime-mode-hook 'set-up-slime-ac)
-  (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-#+end_src
-
-*** Fastnav package
-#+source: fast-nav
-#+begin_src emacs-lisp
-  (require 'fastnav)
-#+end_src
-
-*** Tab-bar
-#+source: Tab bar
-#+begin_src emacs-lisp
-  (require 'tabbar)
-  (tabbar-mode 1)
-  
-  ;; (defun tabbar-buffer-groups ()
-  ;;   "Return the list of group names the current buffer belongs to.
-  ;;  This function is a custom function for tabbar-mode's tabbar-buffer-groups.
-  ;;  This function group all buffers into 3 groups:
-  ;;  Those Dired, those user buffer, and those emacs buffer.
-  ;;  Emacs buffer are those starting with “*”."
-  ;;   (list
-  ;;    (cond
-  ;;     ((string-equal "*" (substring (buffer-name) 0 1))
-  ;;      '("Emacs Buffer")
-  ;;      )
-  ;;     ((eq major-mode 'dired-mode)
-  ;;      '("Dired")
-  ;;      )
-  ;;     (t
-  ;;      '("User Buffer")
-  ;;      )
-  ;;     ))) ;; from Xah Lee
-  
-  ;; (setq tabbar-buffer-groups-function 'tabbar-buffer-groups)
-  
-  ;; (defun tabbar-buffer-groups (buffer)
-  ;;   "Return the list of group names BUFFER belongs to.
-  ;; Return only one group for each buffer."
-  ;;   (with-current-buffer (get-buffer buffer)
-  ;;     (cond
-  ;;      ((string-equal "*" (substring (buffer-name) 0 1))
-  ;;       '("Emacs Buffer"))
-  ;;      ((eq major-mode 'dired-mode)
-  ;;       '("Dired"))
-  ;;      (t
-  ;;       '("User Buffer"))
-  ;;      )))
-  
-#+end_src
-
-#+results: Tab
-: tabbar-buffer-groups
-
-*** Aquamacs tabbar
-#+source: Aquatabs
-#+begin_src emacs-lisp
-  ;; (require 'aquamacs-tabbar)
-  ;; (require 'aquamacs-tools)
-  ;; (require 'tabbar)
-  ;; (require 'tabbar-window)
-#+end_src
-
 *** Starter kit yasnippet
 [[http://code.google.com/p/yasnippet/][yasnippet]] is yet another snippet expansion system for Emacs.  It is
 inspired by TextMate's templating syntax.
@@ -667,6 +531,146 @@ After we've loaded all the Starter Kit defaults, lets load the User's stuff.
     (let ((default-directory user-specific-dir))
       (mapc #'load (directory-files user-specific-dir nil ".*el$"))
       (mapc #'org-babel-load-file (directory-files user-specific-dir nil ".*org$"))))
+#+end_src
+
+*** W3M Mode
+Right now just loading it up for Anything.el
+#+source: w3m
+#+begin_src emacs-lisp
+  ;; (add-to-list 'load-path (concat dotfiles-dir "/src/emacs-w3m"))
+  ;; (require 'w3m)
+#+end_src
+
+*** Matlab
+#+source: matlab
+#+begin_src emacs-lisp
+  (add-to-list 'load-path (concat dotfiles-dir "/src/matlab-emacs-super/matlab-emacs/"))
+  (eval-after-load "matlab-mode" 'matlab-load)
+  
+  ;; (load-library "matlab-load")
+#+end_src
+
+*** Anything mode
+#+begin_src emacs-lisp
+  (unless (system-type-is-gnu)
+    (progn
+      (require 'anything-config)
+      (require 'anything)))
+  
+  ;; trying to get it to search jabber contacts
+  ;; http://groups.google.co.uk/group/gnu.emacs.sources/msg/84a9e5fb0139af61
+  (defun my-jabber-list-contacts (&optional subset require-match default resource) 
+    "List Jabber contacts. 
+   This is a blatant copy-paste from `jabber-chat-with' with some 
+   code removed." 
+    (let ((jid-at-point (or 
+                         (and default 
+                              ;; default can be either a symbol or a string 
+                              (if (symbolp default) 
+                                  (symbol-name default) 
+                                default)) 
+                         (get-text-property (point) 'jabber-jid) 
+                         (bound-and-true-p jabber-chatting-with) 
+                         (bound-and-true-p jabber-group))) 
+          (completion-ignore-case t) 
+          (jid-completion-table (mapcar #'(lambda (item) 
+                                            (cons (symbol-name item) item)) 
+                                        (or subset (jabber-concat-rosters)))) 
+          chosen) 
+      (dolist (item (or subset (jabber-concat-rosters))) 
+        (if (get item 'name) 
+            (push (cons (get item 'name) item) jid-completion-table))) 
+      ;; if the default is not in the allowed subset, it's not a good default 
+      (if (and subset (not (assoc jid-at-point jid-completion-table))) 
+          (setq jid-at-point nil)) 
+      jid-completion-table))
+#+end_src
+
+*** Auto-complete mode
+#+source: auto complete
+#+begin_src emacs-lisp
+  (unless (system-type-is-gnu)
+    (prog
+     (add-to-list 'load-path (concat dotfiles-dir "/src/auto-complete/"))
+     (require 'auto-complete-config)
+     (add-to-list 'ac-dictionary-directories "~/.emacs.d/src/auto-complete/dict/")
+  
+  
+     (ac-config-default)
+                                          ; (ac-flyspell-workaround) i believe this is redundant in config file
+     ;; dirty fix for having AC everywhere
+     (define-globalized-minor-mode real-global-auto-complete-mode
+       auto-complete-mode (lambda ()
+                            (if (not (minibufferp (current-buffer)))
+                                (auto-complete-mode 1))
+                            ))
+     (real-global-auto-complete-mode t)
+     (real-global-auto-complete-mode 0)
+  
+  ;;; Slime with auto-complete
+     (require 'ac-slime)
+     (add-hook 'slime-mode-hook 'set-up-slime-ac)
+     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
+#+end_src
+
+*** Fastnav package
+#+source: fast-nav
+#+begin_src emacs-lisp
+  (require 'fastnav)
+#+end_src
+
+*** Tab-bar
+#+source: Tab bar
+#+begin_src emacs-lisp
+  (require 'tabbar)
+  (tabbar-mode 1)
+  
+  ;; (defun tabbar-buffer-groups ()
+  ;;   "Return the list of group names the current buffer belongs to.
+  ;;  This function is a custom function for tabbar-mode's tabbar-buffer-groups.
+  ;;  This function group all buffers into 3 groups:
+  ;;  Those Dired, those user buffer, and those emacs buffer.
+  ;;  Emacs buffer are those starting with “*”."
+  ;;   (list
+  ;;    (cond
+  ;;     ((string-equal "*" (substring (buffer-name) 0 1))
+  ;;      '("Emacs Buffer")
+  ;;      )
+  ;;     ((eq major-mode 'dired-mode)
+  ;;      '("Dired")
+  ;;      )
+  ;;     (t
+  ;;      '("User Buffer")
+  ;;      )
+  ;;     ))) ;; from Xah Lee
+  
+  ;; (setq tabbar-buffer-groups-function 'tabbar-buffer-groups)
+  
+  ;; (defun tabbar-buffer-groups (buffer)
+  ;;   "Return the list of group names BUFFER belongs to.
+  ;; Return only one group for each buffer."
+  ;;   (with-current-buffer (get-buffer buffer)
+  ;;     (cond
+  ;;      ((string-equal "*" (substring (buffer-name) 0 1))
+  ;;       '("Emacs Buffer"))
+  ;;      ((eq major-mode 'dired-mode)
+  ;;       '("Dired"))
+  ;;      (t
+  ;;       '("User Buffer"))
+  ;;      )))
+  
+#+end_src
+
+#+results: Tab
+: tabbar-buffer-groups
+
+*** Aquamacs tabbar
+#+source: Aquatabs
+#+begin_src emacs-lisp
+  ;; (require 'aquamacs-tabbar)
+  ;; (require 'aquamacs-tools)
+  ;; (require 'tabbar)
+  ;; (require 'tabbar-window)
 #+end_src
 
 * FAQ
