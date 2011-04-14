@@ -14,14 +14,6 @@ GTD system or tool for reproducible research and literate programming.
 For more information on org-mode check out [[http://orgmode.org/worg/][worg]], a large Org-mode wiki
 which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
 
-** Org fs-tree
-#+BEGIN_SRC emacs-lisp
-  (unless (system-type-is-gnu)
-    (add-to-list 'load-path (concat dotfiles-dir "/src/org-fstree"))  
-    (require 'org-fstree))
-#+END_SRC
-
-
 ** My Latex stuff
 #+BEGIN_SRC emacs-lisp
       ;;; Great help from here
