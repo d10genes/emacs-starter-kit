@@ -47,6 +47,15 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
       \\pagestyle{fancy}
       \\renewcommand{\\headrulewidth}{1pt}
       \\renewcommand{\\footrulewidth}{0.5pt}
+  
+      % For the engineering phasor symbol
+      % http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-02/msg00895.html
+      \\makeatletter
+      \\def\\phase#1{{\\vbox{\\ialign{$\\m@th\\scriptstyle##$\\crcr
+      \\not\\mathrel{\\mkern10mu\\smash{#1}}\\crcr
+      \\noalign{\\nointerlineskip}
+      \\mkern2.5mu\\leaders\\hrule height.34pt\\hfill\\mkern2.5mu\\crcr}}}}
+      \\makeatother
       
       % Default footer
       \\fancyfoot[L]{\\small \\jobname \\\\ \\today}
