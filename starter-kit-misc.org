@@ -25,11 +25,23 @@ Things that don't fit anywhere else.
                      
    #+end_src
 
-** Sentences and tabs
+** Sentences and tabs and newlines
    #+source: sentences
    #+begin_src emacs-lisp
      (setq sentence-end-double-space nil)
      (setq-default tab-width 4)
+     (defun toggle-final-newline ()
+       (interactive)
+       "Toggle value of variable require-final-newline"
+       (if require-final-newline
+           (progn
+             (setq require-final-newline nil)
+             (message "nil"))
+         (progn
+           (setq require-final-newline t)
+           (message "t"))))
+     
+     (setq require-final-newline nil)
    #+end_src
    
 ** Color Themes
@@ -168,7 +180,9 @@ Give me Dvorak or give me death
     (activate-input-method "english-dvorak"))
   
   (add-hook 'org-src-mode-hook 'toggle-input-method)
+  (add-hook 'inferior-octave-mode-hook 'toggle-input-method)
   (add-hook 'eshell-mode-hook 'toggle-input-method)
+  (add-hook 'comint-mode-hook 'toggle-input-method)
 #+end_src
 
 ** Anything mode and random crap

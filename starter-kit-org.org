@@ -60,7 +60,7 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
       % Default footer
       \\fancyfoot[L]{\\small \\jobname \\\\ \\today}
       \\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
-      \\fancyfoot[R]{\\small \\copyright \\the\\year\\  Me}
+      \\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
       % END My Article Defaults
       
       "
