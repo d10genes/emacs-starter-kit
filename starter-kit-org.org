@@ -16,62 +16,63 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
 
 ** My Latex stuff
 #+BEGIN_SRC emacs-lisp
-      ;;; Great help from here
-      ;;; http://www.mail-archive.com/emacs-orgmode@gnu.org/msg07645.html
-  (require 'org-install)
-  (require 'org-exp)
-  (require 'org-latex)
-  ;; (require 'org-atom)
-  ;; (require 'org-exp-bibtex)
-  
-  
-  (eval-after-load 'org-export-latex
-    '(progn
-       ;; http://permalink.gmane.org/gmane.emacs.orgmode/36716
-       (add-to-list 'org-export-latex-packages-alist '("" "amsmath" t))
-       (setcar (rassoc '("wasysym" t) org-export-latex-default-packages-alist)
-               "integrals")
-  
-       (add-hook 'org-mode-hook
-                 (lambda ()
-                   (setq org-export-latex-classes (cons '("myarticle"
-                                                          "% BEGIN My Article Defaults
-      \\documentclass[10pt,letterpaper]{article}
+          ;;; Great help from here
+          ;;; http://www.mail-archive.com/emacs-orgmode@gnu.org/msg07645.html
+      (require 'org-install)
+      (require 'org-exp)
+      (require 'org-latex)
+      ;; (require 'org-atom)
+      ;; (require 'org-exp-bibtex)
       
-      \\usepackage[letterpaper,includeheadfoot,top=0.5in,bottom=0.5in,left=0.75in,right=0.75in]{geometry}
-      \\usepackage[utf8]{inputenc}
-      \\usepackage[T1]{fontenc}
-      \\usepackage{hyperref}
-      \\usepackage{lastpage}
-      \\usepackage{fancyhdr}
-      \\pagestyle{fancy}
-      \\renewcommand{\\headrulewidth}{1pt}
-      \\renewcommand{\\footrulewidth}{0.5pt}
-  
-      % For the engineering phasor symbol
-      % http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-02/msg00895.html
-      \\makeatletter
-      \\def\\phase#1{{\\vbox{\\ialign{$\\m@th\\scriptstyle##$\\crcr
-      \\not\\mathrel{\\mkern10mu\\smash{#1}}\\crcr
-      \\noalign{\\nointerlineskip}
-      \\mkern2.5mu\\leaders\\hrule height.34pt\\hfill\\mkern2.5mu\\crcr}}}}
-      \\makeatother
       
-      % Default footer
-      \\fancyfoot[L]{\\small \\jobname \\\\ \\today}
-      \\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
-      \\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
-      % END My Article Defaults
+      (eval-after-load 'org-export-latex
+        '(progn
+           ;; http://permalink.gmane.org/gmane.emacs.orgmode/36716
+           (add-to-list 'org-export-latex-packages-alist '("" "amsmath" t))
+           (setcar (rassoc '("wasysym" t) org-export-latex-default-packages-alist)
+                   "integrals")
       
-      "
-                                                          ("\\section{%s}" . "\\section*{%s}")
-                                                          ("\\subsection{%s}" . "\\subsection*{%s}")
-                                                          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                                          ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                                                          ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                                                        
-                                                        org-export-latex-classes))))))
-  
+           (add-hook 'org-mode-hook
+                     (lambda ()
+                       (setq org-export-latex-classes (cons '("myarticle"
+                                                              "% BEGIN My Article Defaults
+          \\documentclass[10pt,letterpaper]{article}
+          
+          \\usepackage[letterpaper,includeheadfoot,top=0.5in,bottom=0.5in,left=0.75in,right=0.75in]{geometry}
+          \\usepackage[utf8]{inputenc}
+          \\usepackage[T1]{fontenc}
+          \\usepackage{hyperref}
+          \\usepackage{lastpage}
+          \\usepackage{fancyhdr}
+          \\usepackage[all]{xy}              %for doing graphics http://en.wikibooks.org/wiki/LaTeX/Creating_Graphics#Xy-pic
+          \\pagestyle{fancy}
+          \\renewcommand{\\headrulewidth}{1pt}
+          \\renewcommand{\\footrulewidth}{0.5pt}
+    
+          % For the engineering phasor symbol
+          % http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-02/msg00895.html
+          \\makeatletter
+          \\def\\phase#1{{\\vbox{\\ialign{$\\m@th\\scriptstyle##$\\crcr
+          \\not\\mathrel{\\mkern10mu\\smash{#1}}\\crcr
+          \\noalign{\\nointerlineskip}
+          \\mkern2.5mu\\leaders\\hrule height.34pt\\hfill\\mkern2.5mu\\crcr}}}}
+          \\makeatother
+          
+          % Default footer
+          \\fancyfoot[L]{\\small \\jobname \\\\ \\today}
+          \\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
+          \\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
+          % END My Article Defaults
+          
+          "
+                                                              ("\\section{%s}" . "\\section*{%s}")
+                                                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                                                              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                                              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                                              ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                                                            
+                                                            org-export-latex-classes))))))
+      
 #+END_SRC
 
 ** Org-Mode Hook

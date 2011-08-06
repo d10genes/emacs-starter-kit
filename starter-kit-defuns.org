@@ -74,7 +74,7 @@ Functions to interactively modify Emacs transparency.
   
   (defun i-matrixify (arg)
     "Converts an org table to a matrix formatted in LaTeX. Takes an argument to specify delimiter: (, [ and |, etc give matrix with respective delimiters, but no environment enclosure (\\[ \\]), while p, b and v, etc. give same delimiters with the environment."
-    (interactive "cEnter desired matrix delimiter: ")
+    (interactive "cEnter matrix delimiter: ")
     (setq end-env "")
     (setq begin-env "")
     (cond
@@ -321,17 +321,21 @@ Former python defuns.
 #+source: date-and-time
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c d") 'insert-date)
-
-(defun insert-date (prefix)
-  "Insert the current date. With prefix-argument, use ISO format. With
-   two prefix arguments, write out the day and month name."
-  (interactive "P")
-  (let ((format (cond
-		 ((not prefix) "%d %B %Y")
-		 ((equal prefix '(4)) "%Y-%m-%d")
-		 ((equal prefix '(16)) "%A, %d. %B %Y")))
-	(system-time-locale "en_EN"))
-    (insert (format-time-string format))))
+  
+  (insert (format-time-string "%d %B %Y"))
+  
+  (defun insert-date (prefix)
+    "Insert the current date. With prefix-argument, use ISO format. With
+     two prefix arguments, write out the day and month name."
+    (interactive "P")
+    (let ((format (cond
+                   ((not prefix) "%d %B %Y")
+                   ((equal prefix '(4)) "%Y-%m-%d")
+                   ((equal prefix '(16)) "%A, %d. %B %Y")
+                   ))
+          (system-time-locale "en_EN"))
+      (insert (format-time-string format))))
+  
 #+end_src
 
 ** Copy lines, etc

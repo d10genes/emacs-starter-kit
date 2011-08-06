@@ -336,6 +336,17 @@ ido-mode is like magic pixie dust!
           ido-use-filename-at-point t
           ido-max-prospects 10))
   
+  ;;; But it sucks when it auto-searches and I don't want it to
+  ;; disable auto searching for files unless called explicitly
+  (setq ido-auto-merge-delay-time 99999)
+  
+  (define-key ido-file-dir-completion-map (kbd "C-c C-s") 
+    (lambda() 
+      (interactive)
+      (ido-initiate-auto-merge (current-buffer))))
+  ;; http://www.emacswiki.org/emacs/InteractivelyDoThings#toc24
+  
+  
   (defun ido-goto-symbol (&optional symbol-list)
         "Refresh imenu and jump to a place in the buffer using Ido."
         (interactive)

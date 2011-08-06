@@ -58,8 +58,13 @@ In your personal configuration, add something like this to use IPython:
   (require 'virtualenv)
 #+end_src
 
-** Ropemacs and Pymacs
+** New ropemacs thing
 #+BEGIN_SRC emacs-lisp
+  (load-library "init_python")
+#+END_SRC
+
+** Ropemacs and Pymacs
+#+BEGIN_SRC  emacs-lisp :tangle no
   ;;; http://www.enigmacurry.com/2009/01/21/autocompleteel-python-code-completion-in-emacs/
   ;; (add-to-list 'load-path "~/.emacs.d/src/Pymacs-.24b/")
   

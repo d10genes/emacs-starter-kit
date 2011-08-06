@@ -12,28 +12,32 @@ Key Bindings.
 My carry-over stuff--influenced by Mac and Aquamacs
 
 #+begin_src emacs-lisp
-
-(defvar aqm-keys-minor-mode-map (make-keymap) "aqm-keys-minor-mode keymap.")
-
-(define-minor-mode aqm-keys-minor-mode
-  "A minor mode for converting aquamacs emacs to emacs 23 (cocoa)"
-  t " aqm" 'aqm-keys-minor-mode-map)
-
-(aqm-keys-minor-mode 1)         ;; activate
-
-;; recentf, kill buffer
-(define-key aqm-keys-minor-mode-map (kbd "C-x C-r") 'recentf-open-files)
-					;(define-key aqm-keys-minor-mode-map (kbd "C-l") 'recenter-top-bottom)
-(define-key aqm-keys-minor-mode-map (kbd "C-c C-w") 'kill-this-buffer)
-(define-key aqm-keys-minor-mode-map (kbd "S-w") 'kill-this-buffer)
-
-;; Full screen
-(define-key aqm-keys-minor-mode-map (kbd "s-<return>") 'ns-toggle-fullscreen)
-(define-key aqm-keys-minor-mode-map (kbd "s-}") 'tabbar-forward-tab)
-(define-key aqm-keys-minor-mode-map (kbd "s-{") 'tabbar-backward-tab)
-(define-key aqm-keys-minor-mode-map (kbd "s-c") 'clipboard-kill-ring-save)
-(define-key aqm-keys-minor-mode-map (kbd "s-v") 'cua-paste)
-
+  
+  (defvar aqm-keys-minor-mode-map (make-keymap) "aqm-keys-minor-mode keymap.")
+  
+  (define-minor-mode aqm-keys-minor-mode
+    "A minor mode for converting aquamacs emacs to emacs 23 (cocoa)"
+    t " aqm" 'aqm-keys-minor-mode-map)
+  
+  (aqm-keys-minor-mode 1)         ;; activate
+  
+  ;; recentf, kill buffer
+  (define-key aqm-keys-minor-mode-map (kbd "C-x C-r") 'recentf-open-files)
+                      ;(define-key aqm-keys-minor-mode-map (kbd "C-l") 'recenter-top-bottom)
+  (define-key aqm-keys-minor-mode-map (kbd "C-c C-w") 'kill-this-buffer)
+  (define-key aqm-keys-minor-mode-map (kbd "S-w") 'kill-this-buffer)
+  
+  ;; Full screen
+  (define-key aqm-keys-minor-mode-map (kbd "s-<return>") 'ns-toggle-fullscreen)
+  (define-key aqm-keys-minor-mode-map (kbd "s-}") 'tabbar-forward-tab)
+  (define-key aqm-keys-minor-mode-map (kbd "s-{") 'tabbar-backward-tab)
+  (define-key aqm-keys-minor-mode-map (kbd "s-c") 'clipboard-kill-ring-save)
+  (define-key aqm-keys-minor-mode-map (kbd "s-v") 'cua-paste)
+  
+  ;;; inspired by iTerm...yeah!
+  (define-key aqm-keys-minor-mode-map (kbd "s-]") 'other-window)
+  (define-key aqm-keys-minor-mode-map (kbd "s-[") '(lambda () (interactive) (other-window -1)))
+  
    #+end_src
 
 ** Programming keys
@@ -257,11 +261,12 @@ Mostly to make it consistent with setup for other modes.
 #+end_src
 
 ** Use regex searches by default.
+Not sure about this... -wcb
 #+begin_src emacs-lisp 
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "\C-r") 'isearch-backward-regexp)
-(global-set-key (kbd "C-M-s") 'isearch-forward)
-(global-set-key (kbd "C-M-r") 'isearch-backward)
+  ;; (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+  ;; (global-set-key (kbd "\C-r") 'isearch-backward-regexp)
+  ;; (global-set-key (kbd "C-M-s") 'isearch-forward)
+  ;; (global-set-key (kbd "C-M-r") 'isearch-backward)
 #+end_src
 
 ** Jump to a definition in the current file. (This is awesome.)
