@@ -60,7 +60,8 @@ In your personal configuration, add something like this to use IPython:
 
 ** New ropemacs thing
 #+BEGIN_SRC emacs-lisp
-  (load-library "init_python")
+  ;; (load-library "init_python")
+  ;;; Commenting so it doesn't stop my emacs startup, requiring me to --debug-init
 #+END_SRC
 
 ** Ropemacs and Pymacs
