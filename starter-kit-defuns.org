@@ -54,6 +54,8 @@ Functions to interactively modify Emacs transparency.
 
 ** My Latex matrix conversion defun
 #+BEGIN_SRC emacs-lisp
+  ;;; Following functions by Chris Beard
+  ;;; wcbeard10@gmail.com
   (defun matrixify ()
     "Converts an org table to a matrix formatted in LaTeX."
     (interactive)
