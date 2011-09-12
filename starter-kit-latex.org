@@ -5,6 +5,12 @@ This is part of the [[file:starter-kit.org][Emacs Starter Kit]].
 
 * Starter Kit LaTeX
   Support for editing LaTeX.
+** Fix Texify Issue
+#+BEGIN_SRC emacs-lisp
+  ;;; From http://www.emacswiki.org/emacs/FlymakeTex
+  (defun flymake-get-tex-args (file-name)
+    (list "latex" (list "-file-line-error-style" file-name)))
+#+END_SRC
 
 ** Load Packages
 *** Load AucTeX

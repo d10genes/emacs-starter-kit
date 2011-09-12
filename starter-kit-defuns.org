@@ -85,6 +85,7 @@ Functions to interactively modify Emacs transparency.
      ((equal (string arg) "[") (setq delim "b"))
      ((equal (string arg) "{") (setq delim "B"))
      ((equal (string arg) "=") (setq delim "V"))
+     ((equal (string arg) " ") (setq delim ""))
      (t (progn
           (setq begin-env "\\\[\n")
           (setq end-env "\n\\\]")
@@ -133,13 +134,13 @@ Functions to interactively modify Emacs transparency.
       (equal (string (char-after (point))) "|")))
   
   (defun unmatrixify (start end &optional arg)
-    "Converts a LaTeX matrix to an org table"
+    "Converts a LaTeX matrix to an org table, where arg is the number of lines before and after the matrix that are deleted; default 0. "
     (interactive "r")
     (if arg
         (progn
           (setq val arg)
           (insert "arg!"))
-      (setq val 2))
+      (setq val 0))             ;; originally 2, testing with 0
     (save-excursion
       (save-restriction 
         (narrow-to-region start end)

@@ -67,8 +67,8 @@ This following loads color-theme so that it is available by default.
     '(progn
        (color-theme-initialize)))
   
-  (color-theme-railscasts)
-  ;; (color-theme-zenburn)
+  ;; (color-theme-railscasts)
+  (color-theme-zenburn)
   
 #+end_src
 
