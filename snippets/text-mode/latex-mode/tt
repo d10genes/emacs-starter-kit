@@ -1,0 +1,6 @@
+# -*- mode: latex, org-mode -*-
+#name : \times 10^... 
+# author: Chris Beard
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+\times 10^{$1} $0

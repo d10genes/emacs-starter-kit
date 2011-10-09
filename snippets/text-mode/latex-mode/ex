@@ -1,0 +1,6 @@
+# -*- mode: latex, org-mode -*-
+#name : Expectation
+# author: Chris Beard
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+\mathcal E\{$0 \\} 

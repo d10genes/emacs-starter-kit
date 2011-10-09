@@ -1,0 +1,6 @@
+# -*- mode: latex, org-mode -*-
+#name : \frac
+# author: Chris Beard
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+\frac{\partial $1}{\partial ${2:t}} $0

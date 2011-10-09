@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# contributor: Chris Beard
+# key: nl
+# name: equation array newline
+# --
+  $1 & ${2:=} & $0
+\\\\

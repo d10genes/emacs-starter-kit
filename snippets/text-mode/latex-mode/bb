@@ -1,0 +1,6 @@
+# -*- mode: latex, org-mode -*-
+#name : *...*
+# author: Chris Beard
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+*$1* $0

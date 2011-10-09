@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# contributor: Chris Beard
+# key: ssd
+# name: double $ math env
+# --
+\[
+$0
+\]

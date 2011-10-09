@@ -23,6 +23,14 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
   (require 'org-install)
   (require 'org-exp)
   (require 'org-latex)
+
+    ;;; Let it treat $$ as parentheses
+  (modify-syntax-entry ?$ "$" org-mode-syntax-table)
+  (modify-syntax-entry ?\\ "w" org-mode-syntax-table)
+  (modify-syntax-entry ?& "-" org-mode-syntax-table)
+  (modify-syntax-entry ?= "-" org-mode-syntax-table)
+  (modify-syntax-entry ?\ "-" org-mode-syntax-table)
+
   ;; (require 'org-atom)
   ;; (require 'org-exp-bibtex)
   
@@ -186,6 +194,20 @@ display a list of the code blocks commands and their related keys.
 
 #+begin_src emacs-lisp
   (setq org-use-speed-commands t)
+  
+  ; ==============
+  ; ===MY STUFF===
+  ; ==============
+  (add-to-list 'org-speed-commands-user
+               '("h" org-speed-move-safe (quote outline-next-visible-heading)))
+  (add-to-list 'org-speed-commands-user
+               '("t" org-speed-move-safe (quote outline-previous-visible-heading)))
+  (add-to-list 'org-speed-commands-user
+               '("d" org-speed-move-safe (quote org-backward-same-level)))
+  (add-to-list 'org-speed-commands-user
+               '("n" org-speed-move-safe (quote org-forward-same-level)))
+  (add-to-list 'org-speed-commands-user
+               '("g" org-speed-move-safe (quote outline-up-heading)))
 #+end_src
 
 ** Code blocks

@@ -1,0 +1,4 @@
+# name: vec
+# key: vc
+# --
+\vec{$1} $0

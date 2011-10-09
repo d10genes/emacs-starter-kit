@@ -323,10 +323,13 @@ Former python defuns.
 ** Insert date and time
 #+source: date-and-time
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-c d") 'insert-date)
+  (global-set-key (kbd "C-c d") 'my-insert-date)
   
-  (insert (format-time-string "%d %B %Y"))
-  
+  (defun my-insert-date ()
+    "Insert the current date."
+    (interactive)
+    (insert (format-time-string "%d %B %Y")))
+
   (defun insert-date (prefix)
     "Insert the current date. With prefix-argument, use ISO format. With
      two prefix arguments, write out the day and month name."

@@ -1,0 +1,6 @@
+# -*- mode: latex, org-mode -*-
+#name : \sqrt{...}
+# author: Chris Beard
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+\sqrt{$1} $0

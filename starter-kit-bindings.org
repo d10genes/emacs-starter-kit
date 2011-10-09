@@ -39,35 +39,6 @@ My carry-over stuff--influenced by Mac and Aquamacs
   (define-key aqm-keys-minor-mode-map (kbd "s-[") '(lambda () (interactive) (other-window -1)))
   
    #+end_src
-
-** Programming keys
-#+source: programming keys
-#+begin_src emacs-lisp
-
-(defvar myProgramming-keys-minor-mode-map (make-keymap) "myProgramming-keys-minor-mode keymap.")
-(define-minor-mode myProgramming-keys-minor-mode
-  "A minor mode for programming"
-  t " prog" 'myProgramming-keys-minor-mode-map)
-
-(define-key myProgramming-keys-minor-mode-map (kbd "C-<tab>") 'ff-find-other-file )
-;; (define-key myProgramming-keys-minor-mode-map (kbd "M-'") 'comment-kill)
-(define-key myProgramming-keys-minor-mode-map (kbd "M-]") 'my-toggle-selective-display)
-
-(add-hook 'c-mode-common-hook '(lambda ()
-				 (myProgramming-keys-minor-mode 1)
-				 ))
-
-#+end_src
-*** Matlab
-#+source: Matlab
-#+begin_src emacs-lisp
-  ;  (mapcar (lambda(x)(car(rassq x minor-mode-map-alist)))(current-minor-mode-maps))
-  
-  (add-hook 'matlab-mode-hook
-            (lambda ()
-              (define-key matlab-mode-map (kbd "M-;") 'comment-dwim)))
-  
-#+end_src
 ** Lisp Keys
 #+source: lisp keys
 #+begin_src emacs-lisp
@@ -120,15 +91,15 @@ My carry-over stuff--influenced by Mac and Aquamacs
   
                                           ;    (define-key chris-keys-minor-mode "\M-i" 'ido-goto-symbol)
   
-  
-  ;; Files
+    ;; Files
   (define-key chris-keys-minor-mode-map (kbd "C-c C-r") 'revert-buffer)
   (define-key chris-keys-minor-mode-map (kbd "C-c f") 'ffap)
   (define-key chris-keys-minor-mode-map "\M-s" 'anything)
   (define-key chris-keys-minor-mode-map "\C-xaf" 'anything-for-files)
   
   ;; Autocomplete
-  (define-key chris-keys-minor-mode-map (kbd "M-<tab>") 'auto-complete)
+;;  (define-key chris-keys-minor-mode-map (kbd "M-<tab>") 'auto-complete)
+;; temporarily turning off
   ;; (define-key chris-keys-minor-mode-map (kbd "<tab>") 'auto-complete)
   
   
@@ -224,6 +195,38 @@ Mostly to make it consistent with setup for other modes.
     (define-key ido-mode-map [backspace] 'ido-up-directory)
     ;; http://people.ku.edu/~syliu/shredderyin/ido.html
     )
+  
+#+end_src
+** Programming keys
+#+source: programming keys
+#+begin_src emacs-lisp
+
+(defvar myProgramming-keys-minor-mode-map (make-keymap) "myProgramming-keys-minor-mode keymap.")
+(define-minor-mode myProgramming-keys-minor-mode
+  "A minor mode for programming"
+  t " prog" 'myProgramming-keys-minor-mode-map)
+
+(define-key myProgramming-keys-minor-mode-map (kbd "C-<tab>") 'ff-find-other-file )
+;; (define-key myProgramming-keys-minor-mode-map (kbd "M-'") 'comment-kill)
+(define-key myProgramming-keys-minor-mode-map (kbd "M-]") 'my-toggle-selective-display)
+
+(add-hook 'c-mode-common-hook '(lambda ()
+				 (myProgramming-keys-minor-mode 1)
+				 ))
+
+#+end_src
+*** Matlab and Octave
+#+source: Matlab
+#+begin_src emacs-lisp
+  ;  (mapcar (lambda(x)(car(rassq x minor-mode-map-alist)))(current-minor-mode-maps))
+  
+  (add-hook 'matlab-mode-hook
+            (lambda ()
+              (define-key matlab-mode-map (kbd "M-;") 'comment-dwim)))
+  
+  (add-hook 'octave-mode-hook
+            (lambda ()
+              (define-key octave-mode-map (kbd "<tab>") 'my-octave-complete-symbol)))
   
 #+end_src
 
