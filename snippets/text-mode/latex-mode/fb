@@ -1,9 +1,6 @@
 # -*- mode: latex, org-mode -*-
-#name : eqnarray*
+#name : \fbox{...}
 # author: Chris Beard
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
-\\begin{eqnarray${1:*}}
-  $2 & ${3:=} & $0
-\\\\
-\\end{eqnarray$1}
+\fbox{$0}

@@ -23,14 +23,14 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
   (require 'org-install)
   (require 'org-exp)
   (require 'org-latex)
-
+  
     ;;; Let it treat $$ as parentheses
   (modify-syntax-entry ?$ "$" org-mode-syntax-table)
   (modify-syntax-entry ?\\ "w" org-mode-syntax-table)
   (modify-syntax-entry ?& "-" org-mode-syntax-table)
   (modify-syntax-entry ?= "-" org-mode-syntax-table)
   (modify-syntax-entry ?\ "-" org-mode-syntax-table)
-
+  
   ;; (require 'org-atom)
   ;; (require 'org-exp-bibtex)
   
@@ -56,6 +56,7 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
       \\usepackage{fancyhdr}
       \\usepackage[all]{xy}              %for doing graphics http://en.wikibooks.org/wiki/LaTeX/Creating_Graphics#Xy-pic
       \\pagestyle{fancy}
+      \\usepackage{upquote}              %so verbatim code doesn't output as curly quotes
       \\renewcommand{\\headrulewidth}{1pt}
       \\renewcommand{\\footrulewidth}{0.5pt}
       
@@ -71,7 +72,7 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
       % Default footer
       \\fancyfoot[L]{\\small \\jobname \\\\ \\today}
       \\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
-      \\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
+      %\\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
       % END My Article Defaults
       
       "
@@ -80,26 +81,130 @@ which is also *implemented using* Org-mode and [[http://git-scm.com/][git]].
                                                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                                                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
                                                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                                                        
                                                         org-export-latex-classes))))))
+  
+  (add-to-list 'org-export-latex-classes
+               '("myreport"
+                 "% BEGIN My Report Defaults
+      \\documentclass[10pt,letterpaper]{article}
+      
+      %\\usepackage[letterpaper,includeheadfoot,top=1in,bottom=.75in,left=.75in,right=.75in]{geometry}
+      \\usepackage[letterpaper,top=1in,bottom=.75in,left=.75in,right=.75in]{geometry}
+      \\usepackage[utf8]{inputenc}
+      \\usepackage[T1]{fontenc}
+      \\usepackage{hyperref}
+      \\usepackage{lastpage}
+      %\\usepackage{fancyhdr}
+      %\\usepackage[all]{xy}              %for doing graphics http://en.wikibooks.org/wiki/LaTeX/Creating_Graphics#Xy-pic
+      \\pagestyle{fancy}
+      %\\usepackage{upquote}              %so verbatim code doesn't output as curly quotes
+      \\renewcommand{\\headrulewidth}{1pt}
+      \\renewcommand{\\footrulewidth}{0.5pt}
+      
+      % For the engineering phasor symbol
+      % http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-02/msg00895.html
+      \\makeatletter
+      \\def\\phase#1{{\\vbox{\\ialign{$\\m@th\\scriptstyle##$\\crcr
+      \\not\\mathrel{\\mkern10mu\\smash{#1}}\\crcr
+      \\noalign{\\nointerlineskip}
+      \\mkern2.5mu\\leaders\\hrule height.34pt\\hfill\\mkern2.5mu\\crcr}}}}
+      \\makeatother
+      
+      % Default footer
+      %\\fancyfoot[L]{\\small \\jobname \\\\ \\today}
+      %\\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
+      %\\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
+      % END My Article Defaults
+      
+      "
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  
+  (add-to-list 'org-export-latex-classes
+                 '("myreportsimple"
+                   "% BEGIN My Simple Report defaults
+        \\documentclass[10pt,letterpaper]{article}
+        
+        \\usepackage[letterpaper,includeheadfoot,top=1in,bottom=1in,left=1in,right=1in]{geometry}
+        \\usepackage[utf8]{inputenc}
+        \\usepackage[T1]{fontenc}
+        \\usepackage{hyperref}
+        \\usepackage{lastpage}
+        \\usepackage{fancyhdr}
+        %\\usepackage[all]{xy}              %for doing graphics http://en.wikibooks.org/wiki/LaTeX/Creating_Graphics#Xy-pic
+        \\pagestyle{fancy}
+        %\\usepackage{upquote}              %so verbatim code doesn't output as curly quotes
+        \\renewcommand{\\headrulewidth}{1pt}
+        \\renewcommand{\\footrulewidth}{0.5pt}
+        
+        % For the engineering phasor symbol
+        % http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-02/msg00895.html
+        \\makeatletter
+        \\def\\phase#1{{\\vbox{\\ialign{$\\m@th\\scriptstyle##$\\crcr
+        \\not\\mathrel{\\mkern10mu\\smash{#1}}\\crcr
+        \\noalign{\\nointerlineskip}
+        \\mkern2.5mu\\leaders\\hrule height.34pt\\hfill\\mkern2.5mu\\crcr}}}}
+        \\makeatother
+        
+        % Default footer
+        %\\fancyfoot[L]{\\small \\jobname \\\\ \\today}
+        %\\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
+        %\\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
+        % END My Article Defaults
+        
+        "
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  
+  (require 'org-latex)
+  (setq org-export-latex-listings t)
+  (add-to-list 'org-export-latex-classes
+               '("org-article"
+                 "\\documentclass{org-article}
+               [NO-DEFAULT-PACKAGES]
+               [PACKAGES]
+               [EXTRA]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   
 #+END_SRC
 
-** Org-Mode Hook
+** COMMENT Org-Mode Hook
 The latest version of yasnippets doesn't play well with Org-mode, the
 following function allows these two to play nicely together
 #+begin_src emacs-lisp
-  (defun yas/org-very-safe-expand ()
-    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
-  
+    (defun yas/org-very-safe-expand ()
+      (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+    
+    (add-hook 'org-mode-hook
+              (lambda ()
+                ;; yasnippet (using the new org-cycle hooks)
+                (make-variable-buffer-local 'yas/trigger-key)
+                (setq yas/trigger-key [tab])
+                (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+                (define-key yas/keymap [tab] 'yas/next-field)))
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (latex-mode)
+  ;; (LaTeX-math-mode)
+  (org-mode)
   (add-hook 'org-mode-hook
             (lambda ()
-              ;; yasnippet (using the new org-cycle hooks)
-              (make-variable-buffer-local 'yas/trigger-key)
-              (setq yas/trigger-key [tab])
-              (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-              (define-key yas/keymap [tab] 'yas/next-field)))
+  (if (boundp 'LaTeX-math-mode)
+      (LaTeX-math-mode)
+(LaTeX-mode))))
   
+  ;; (add-hook 'org-mode-hook
+  ;;           (lambda ()
+  ;;             (LaTeX-math-mode)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -119,6 +224,7 @@ following function allows these two to play nicely together
               (setq yas/trigger-key [tab])
               (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
               (define-key yas/keymap [tab] 'yas/next-field)
+              ;(auto-complete-mode 0)
               ))
 #+end_src
 

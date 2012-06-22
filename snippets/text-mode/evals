@@ -1,8 +1,6 @@
-# -*- mode: latex, org-mode -*-
-#name : *...*
+# -*- mode: text -*-
+#name : eigenvalues
 # author: Chris Beard
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --
-\[
-\boxed{$0}
-\]
+eigenvalues 

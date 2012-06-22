@@ -46,7 +46,7 @@ supplied by the Python distribution itself.
                  (set-variable 'indent-tabs-mode nil) )))
   
   ;;; Added by Chris
-  (python-use-ipython "/usr/local/share/python/ipython" '("-colors" "Linux" "-nobanner"))
+  ;; (python-use-ipython "/usr/local/share/python/ipython")
 #+end_src
 
 In your personal configuration, add something like this to use IPython:

@@ -176,13 +176,13 @@ Give me Dvorak or give me death
 #+begin_src emacs-lisp
   (setq default-input-method "english-dvorak")
   
-  (defadvice switch-to-buffer (after activate-input-method activate) ; dvorak keyboard
-    (activate-input-method "english-dvorak"))
+;  (defadvice switch-to-buffer (after activate-input-method activate) ; dvorak keyboard
+;    (activate-input-method "english-dvorak"))
   
-  (add-hook 'org-src-mode-hook 'toggle-input-method)
-  (add-hook 'inferior-octave-mode-hook 'toggle-input-method)
-  (add-hook 'eshell-mode-hook 'toggle-input-method)
-  (add-hook 'comint-mode-hook 'toggle-input-method)
+ ;  (add-hook 'org-src-mode-hook 'toggle-input-method)
+ ;  (add-hook 'inferior-octave-mode-hook 'toggle-input-method)
+ ;  (add-hook 'eshell-mode-hook 'toggle-input-method)
+ ;  (add-hook 'comint-mode-hook 'toggle-input-method)
 #+end_src
 
 ** Anything mode and random crap
@@ -191,7 +191,7 @@ Give me Dvorak or give me death
   ;;; Add new lines
   (setq next-line-add-newlines t)
   
-  (setq history-length 100)
+  (setq history-length 250)
   (setq inhibit-startup-screen t)
     
   (if (string-match "24" emacs-version) (progn

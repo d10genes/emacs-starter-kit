@@ -1,5 +1,5 @@
 # -*- mode: latex, org-mode -*-
-#name : \frac
+#name : \frac{\partial}
 # author: Chris Beard
 # expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
 # --

@@ -68,41 +68,39 @@ My carry-over stuff--influenced by Mac and Aquamacs
 ** Chris keys
 #+source: Chris-keys
 #+begin_src emacs-lisp
-  (defvar chris-keys-minor-mode-map (make-keymap) "chris-keys-minor-mode keymap.")
-  
-  (define-minor-mode chris-keys-minor-mode
-    "A minor mode so that my key settings override annoying major modes."
-    t " wcb" 'chris-keys-minor-mode-map)
-  
-  (chris-keys-minor-mode 1)
-  
-  ;;; Org table to Latex
-  (define-key chris-keys-minor-mode-map (kbd "C-c m") 'i-matrixify)
-  
-  ;; Fastnav
-  (define-key chris-keys-minor-mode-map "\M-z" 'zap-up-to-char-forward)
-  (define-key chris-keys-minor-mode-map "\M-Z" 'zap-up-to-char-backward)
-  ;; (define-key chris-keys-minor-mode-map "\M-i" 'sprint-forward)
-  ;; (define-key chris-keys-minor-mode-map "\M-I" 'sprint-backward)
-  (define-key chris-keys-minor-mode-map "\M-i" 'jump-to-char-forward)
-  (define-key chris-keys-minor-mode-map "\M-I" 'jump-to-char-backward)
-  
-  (define-key chris-keys-minor-mode-map (kbd "C-.") 'repeat-complex-command)
-  
-                                          ;    (define-key chris-keys-minor-mode "\M-i" 'ido-goto-symbol)
-  
-    ;; Files
-  (define-key chris-keys-minor-mode-map (kbd "C-c C-r") 'revert-buffer)
-  (define-key chris-keys-minor-mode-map (kbd "C-c f") 'ffap)
-  (define-key chris-keys-minor-mode-map "\M-s" 'anything)
-  (define-key chris-keys-minor-mode-map "\C-xaf" 'anything-for-files)
-  
-  ;; Autocomplete
-;;  (define-key chris-keys-minor-mode-map (kbd "M-<tab>") 'auto-complete)
-;; temporarily turning off
-  ;; (define-key chris-keys-minor-mode-map (kbd "<tab>") 'auto-complete)
-  
-  
+    (defvar chris-keys-minor-mode-map (make-keymap) "chris-keys-minor-mode keymap.")
+    
+    (define-minor-mode chris-keys-minor-mode
+      "A minor mode so that my key settings override annoying major modes."
+      t " wcb" 'chris-keys-minor-mode-map)
+    
+    (chris-keys-minor-mode 1)
+    
+    ;;; Org table to Latex
+    (define-key chris-keys-minor-mode-map (kbd "C-c m") 'i-matrixify)
+    
+    ;; Fastnav
+    (define-key chris-keys-minor-mode-map "\M-z" 'zap-up-to-char-forward)
+    (define-key chris-keys-minor-mode-map "\M-Z" 'zap-up-to-char-backward)
+    ;; (define-key chris-keys-minor-mode-map "\M-i" 'sprint-forward)
+    ;; (define-key chris-keys-minor-mode-map "\M-I" 'sprint-backward)
+    (define-key chris-keys-minor-mode-map "\M-i" 'jump-to-char-forward)
+    (define-key chris-keys-minor-mode-map "\M-I" 'jump-to-char-backward)
+    
+    (define-key chris-keys-minor-mode-map (kbd "C-.") 'repeat-complex-command)
+    
+                                            ;    (define-key chris-keys-minor-mode "\M-i" 'ido-goto-symbol)
+    
+      ;; Files
+    (define-key chris-keys-minor-mode-map (kbd "C-c C-r") 'revert-buffer)
+    (define-key chris-keys-minor-mode-map (kbd "C-c f") 'ffap)
+    (define-key chris-keys-minor-mode-map "\M-s" 'anything)
+    (define-key chris-keys-minor-mode-map "\C-xaf" 'anything-for-files)
+    
+    
+    
+  ;; Yasnippet
+  (define-key chris-keys-minor-mode-map (kbd "M-<tab>") 'yas/expand)
 #+end_src
 
 *** For moving around in and resizing Windows/buffers
@@ -223,6 +221,9 @@ Mostly to make it consistent with setup for other modes.
   (add-hook 'matlab-mode-hook
             (lambda ()
               (define-key matlab-mode-map (kbd "M-;") 'comment-dwim)))
+  (add-hook 'matlab-mode-hook
+            (lambda ()
+              (define-key matlab-mode-map "\C-c\C-il" 'matlab-shell-run-region-or-line)))  
   
   (add-hook 'octave-mode-hook
             (lambda ()

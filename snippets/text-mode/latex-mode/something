@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: something worth noting
+# key: test
+# orig: ${1:something} that is worth${1:$(and (string-match "{" yas/text) "}")} noting
+# (and (string-match "\{" yas/text) "\}")
+# --
+\left${1:\{} $0 \right${1:$(cond
+                            ((string-match "|" yas/text) "|")
+                            ((string-match "(" yas/text) ")")
+                            ((string-match "\\\[" yas/text) "]")
+                            ((string-match "\{" yas/text) "\\\\\}")
+                            (t yas/text)
+                            )}

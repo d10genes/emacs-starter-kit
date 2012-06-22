@@ -1,0 +1,381 @@
+% Created 2011-11-23 Wed 00:21
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage[integrals]{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{amsmath}
+\providecommand{\alert}[1]{\textbf{#1}}
+\begin{document}
+
+
+
+\title{Starter Kit Org}
+\author{Chris Beard}
+\date{23 November 2011}
+\maketitle
+
+
+This is part of the \href{file:///Users/FingerMan/.emacs.d/starter-kit.org}{Emacs Starter Kit}.
+
+\section*{Starter Kit Org}
+\label{sec-1}
+
+Configuration for the eminently useful \href{http://orgmode.org/}{Org Mode}.
+
+Org-mode is for keeping notes, maintaining ToDo lists, doing project
+planning, and authoring with a fast and effective plain-text system.
+Org Mode can be used as a very simple folding outliner or as a complex
+GTD system or tool for reproducible research and literate programming.
+
+For more information on org-mode check out \href{http://orgmode.org/worg/}{worg}, a large Org-mode wiki
+which is also \textbf{implemented using} Org-mode and \href{http://git-scm.com/}{git}.
+\subsection*{My Latex stuff}
+\label{sec-1_1}
+
+\begin{verbatim}
+(setq org-export-copy-to-kill-ring nil) ;so it doesn't fill up the clipboard
+
+    ;;; Great help from here
+    ;;; http://www.mail-archive.com/emacs-orgmode@gnu.org/msg07645.html
+(require 'org-install)
+(require 'org-exp)
+(require 'org-latex)
+
+  ;;; Let it treat $$ as parentheses
+(modify-syntax-entry ?$ "$" org-mode-syntax-table)
+(modify-syntax-entry ?\\ "w" org-mode-syntax-table)
+(modify-syntax-entry ?& "-" org-mode-syntax-table)
+(modify-syntax-entry ?= "-" org-mode-syntax-table)
+(modify-syntax-entry ?\ "-" org-mode-syntax-table)
+
+;; (require 'org-atom)
+;; (require 'org-exp-bibtex)
+
+
+(eval-after-load 'org-export-latex
+  '(progn
+     ;; http://permalink.gmane.org/gmane.emacs.orgmode/36716
+     (add-to-list 'org-export-latex-packages-alist '("" "amsmath" t))
+     (setcar (rassoc '("wasysym" t) org-export-latex-default-packages-alist)
+             "integrals")
+
+     (add-hook 'org-mode-hook
+               (lambda ()
+                 (setq org-export-latex-classes (cons '("myarticle"
+                                                        "% BEGIN My Article Defaults
+    \\documentclass[10pt,letterpaper]{article}
+    
+    \\usepackage[letterpaper,includeheadfoot,top=0.5in,bottom=0.5in,left=0.75in,right=0.75in]{geometry}
+    \\usepackage[utf8]{inputenc}
+    \\usepackage[T1]{fontenc}
+    \\usepackage{hyperref}
+    \\usepackage{lastpage}
+    \\usepackage{fancyhdr}
+    \\usepackage[all]{xy}              %for doing graphics http://en.wikibooks.org/wiki/LaTeX/Creating_Graphics#Xy-pic
+    \\pagestyle{fancy}
+    \\usepackage{upquote}              %so verbatim code doesn't output as curly quotes
+    \\renewcommand{\\headrulewidth}{1pt}
+    \\renewcommand{\\footrulewidth}{0.5pt}
+    
+    % For the engineering phasor symbol
+    % http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-02/msg00895.html
+    \\makeatletter
+    \\def\\phase#1{{\\vbox{\\ialign{$\\m@th\\scriptstyle##$\\crcr
+    \\not\\mathrel{\\mkern10mu\\smash{#1}}\\crcr
+    \\noalign{\\nointerlineskip}
+    \\mkern2.5mu\\leaders\\hrule height.34pt\\hfill\\mkern2.5mu\\crcr}}}}
+    \\makeatother
+    
+    % Default footer
+    \\fancyfoot[L]{\\small \\jobname \\\\ \\today}
+    \\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
+    \\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
+    % END My Article Defaults
+    
+    "
+                                                        ("\\section{%s}" . "\\section*{%s}")
+                                                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                                                      org-export-latex-classes))))))
+
+(add-to-list 'org-export-latex-classes
+             '("myreport"
+               "% BEGIN My Report Defaults
+    \\documentclass[10pt,letterpaper]{article}
+    
+    \\usepackage[letterpaper,includeheadfoot,top=1in,bottom=.75in,left=.75in,right=.75in]{geometry}
+    \\usepackage[utf8]{inputenc}
+    \\usepackage[T1]{fontenc}
+    \\usepackage{hyperref}
+    \\usepackage{lastpage}
+    \\usepackage{fancyhdr}
+    %\\usepackage[all]{xy}              %for doing graphics http://en.wikibooks.org/wiki/LaTeX/Creating_Graphics#Xy-pic
+    \\pagestyle{fancy}
+    %\\usepackage{upquote}              %so verbatim code doesn't output as curly quotes
+    \\renewcommand{\\headrulewidth}{1pt}
+    \\renewcommand{\\footrulewidth}{0.5pt}
+    
+    % For the engineering phasor symbol
+    % http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-02/msg00895.html
+    \\makeatletter
+    \\def\\phase#1{{\\vbox{\\ialign{$\\m@th\\scriptstyle##$\\crcr
+    \\not\\mathrel{\\mkern10mu\\smash{#1}}\\crcr
+    \\noalign{\\nointerlineskip}
+    \\mkern2.5mu\\leaders\\hrule height.34pt\\hfill\\mkern2.5mu\\crcr}}}}
+    \\makeatother
+    
+    % Default footer
+    %\\fancyfoot[L]{\\small \\jobname \\\\ \\today}
+    %\\fancyfoot[C]{\\small Page \\thepage\\ of \\pageref{LastPage}}
+    %\\fancyfoot[R]{\\small \\copyright \\the\\year\\  Chris Beard}
+    % END My Article Defaults
+    
+    "
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+\end{verbatim}
+\subsection*{Org-Mode Hook}
+\label{sec-1_2}
+
+The latest version of yasnippets doesn't play well with Org-mode, the
+following function allows these two to play nicely together
+\begin{verbatim}
+  (defun yas/org-very-safe-expand ()
+    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+  
+  (add-hook 'org-mode-hook
+            (lambda ()
+              ;; yasnippet (using the new org-cycle hooks)
+              (make-variable-buffer-local 'yas/trigger-key)
+              (setq yas/trigger-key [tab])
+              (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+              (define-key yas/keymap [tab] 'yas/next-field)))
+
+;; (add-hook 'org-mode-hook
+;;             (lambda ()
+;;               (LaTeX-math-mode)))
+\end{verbatim}
+
+\begin{verbatim}
+(add-hook 'org-mode-hook
+          (lambda ()
+            (local-set-key "\M-\C-n" 'outline-next-visible-heading)
+            (local-set-key "\M-\C-p" 'outline-previous-visible-heading)
+            (local-set-key "\M-\C-u" 'outline-up-heading)
+            ;; table
+            (local-set-key "\M-\C-w" 'org-table-copy-region)
+            (local-set-key "\M-\C-y" 'org-table-paste-rectangle)
+            (local-set-key "\M-\C-l" 'org-table-sort-lines)
+            ;; display images
+            (local-set-key "\M-I" 'org-toggle-iimage-in-org)
+            ;; yasnippet (using the new org-cycle hooks)
+            (make-variable-buffer-local 'yas/trigger-key)
+            (setq yas/trigger-key [tab])
+            (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+            (define-key yas/keymap [tab] 'yas/next-field)
+            ))
+\end{verbatim}
+\subsection*{My org file settings}
+\label{sec-1_3}
+
+\begin{verbatim}
+  ;; Not sure
+(defvar org-sys-directory "~/devel/org-mode/lisp"
+  "/opt/local/var/macports/sources/rsync.macports.org/release/ports/editors/org-mode 
+     ")
+(setq load-path (cons org-sys-directory load-path))
+
+;; Set to the location of your Org files on your local system
+(setq org-directory "~/Dropbox/org")
+(setq org-mobile-directory "~/Dropbox/MobileOrg")
+(setq org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org")
+;; (setq org-agenda-files (quote ("~/Dropbox/org/")))
+(custom-set-variables '(org-agenda-files (quote ("~/Dropbox/org/"
+                                                 ;; "~/Dropbox/org/school.org"
+                                                 ;; "~/Dropbox/org/leisure.org"
+                                                 ))))
+
+(setq org-tag-alist '(("libertarian" . ?l)
+                      ("mirism" . ?m)
+                      ("emacs" . ?e)
+                      ("thought" . ?i)
+                      ("engineer" . ?n)
+                      ("org-mode" . ?o)
+                      ("gradapp" . ?g)
+                      ))
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)"  "|" "DONE(d)" "STARTED(s)""PARTIAL(p)" "WAITING(w)" )))
+
+;; Capture
+;; http://orgmode.org/manual/Template-expansion.html#Template-expansion
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/Dropbox/org/notes.org" "Tasks")
+         "* TODO %?\n %u  %i")
+        ("j" "Journal" entry (file+datetree "~/Dropbox/org/thoughts-in-life3.org")
+         "* %?\n %u  %i\n %a")
+        ("i" "List Item" item (file "~/Dropbox/org/notes.org")
+         "- %?\n %u  %i\n %a")
+        ))
+
+
+;; Shortcut Keys
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+(define-key global-map "\C-cc" 'org-capture)
+\end{verbatim}
+\subsection*{Open org files in org\ldots{}I think?}
+\label{sec-1_4}
+
+\begin{verbatim}
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+\end{verbatim}
+   
+\subsection*{Speed keys}
+\label{sec-1_5}
+
+Speed commands enable single-letter commands in Org-mode files when
+the point is at the beginning of a headline, or at the beginning of a
+code block.
+
+See the `=org-speed-commands-default=' variable for a list of the keys
+and commands enabled at the beginning of headlines.  All code blocks
+are available at the beginning of a code block, the following key
+sequence \texttt{C-c C-v h} (bound to `=org-babel-describe-bindings=') will
+display a list of the code blocks commands and their related keys.
+
+\begin{verbatim}
+(setq org-use-speed-commands t)
+
+; ==============
+; ===MY STUFF===
+; ==============
+(add-to-list 'org-speed-commands-user
+             '("h" org-speed-move-safe (quote outline-next-visible-heading)))
+(add-to-list 'org-speed-commands-user
+             '("t" org-speed-move-safe (quote outline-previous-visible-heading)))
+(add-to-list 'org-speed-commands-user
+             '("d" org-speed-move-safe (quote org-backward-same-level)))
+(add-to-list 'org-speed-commands-user
+             '("n" org-speed-move-safe (quote org-forward-same-level)))
+(add-to-list 'org-speed-commands-user
+             '("g" org-speed-move-safe (quote outline-up-heading)))
+\end{verbatim}
+\subsection*{Code blocks}
+\label{sec-1_6}
+
+This activates a number of widely used languages, you are encouraged
+to activate more languages using the customize interface for the
+`=org-babel-load-languages=' variable, or with an elisp form like the
+one below.  The customize interface of `=org-babel-load-languages='
+contains an up to date list of the currently supported languages.
+\begin{verbatim}
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (sh . t)
+   (R . t)
+   (perl . t)
+   (ruby . t)
+   (python . t)
+   (js . t)
+   (haskell . t)
+   (clojure . t)
+   (ditaa . t)))
+\end{verbatim}
+
+You are encouraged to add the following to your personal configuration
+although it is not added by default as a security precaution.
+\begin{verbatim}
+(setq org-confirm-babel-evaluate nil)
+\end{verbatim}
+
+The following displays the contents of code blocks in Org-mode files
+using the major-mode of the code.  It also changes the behavior of
+\texttt{TAB} to as if it were used in the appropriate major mode.  This means
+that reading and editing code form inside of your Org-mode files is
+much more like reading and editing of code using its major mode.
+\begin{verbatim}
+(setq org-src-fontify-natively t)
+(setq org-src-tab-acts-natively t)
+\end{verbatim}
+\subsection*{Load up the Library of Babel}
+\label{sec-1_7}
+
+The library of babel contains makes many useful functions available
+for use by code blocks in \textbf{any} emacs file.  See the actual
+\href{file:///Users/FingerMan/.emacs.d/src/org/contrib/babel/library-of-babel.org}{library-of-babel.org} file for information on the functions, and see
+\href{http://orgmode.org/worg/org-contrib/babel/intro.php#library-of-babel}{worg:library-of-babel} for more usage information.
+\begin{verbatim}
+(org-babel-lob-ingest
+ (expand-file-name
+  "library-of-babel.org"
+  (expand-file-name
+   "babel"
+   (expand-file-name
+    "contrib"
+    (expand-file-name
+     "org"
+     (expand-file-name "src" dotfiles-dir))))))
+\end{verbatim}
+\subsection*{Ensure the Latest Org-mode manual is in the info directory}
+\label{sec-1_8}
+
+By placing the \texttt{doc/} directory in Org-mode at the front of the
+\texttt{Info-directory-list} we can be sure that the latest version of the
+Org-mode manual is available to the \texttt{info} command (bound to \texttt{C-h i}).
+\begin{verbatim}
+(if (boundp 'Info-directory-list)
+    (setq Info-directory-list (append Info-directory-list
+                                      Info-default-directory-list))
+    (setq Info-directory-list Info-default-directory-list))
+(setq Info-directory-list
+      (cons (expand-file-name
+             "doc"
+             (expand-file-name
+              "org"
+              (expand-file-name "src" dotfiles-dir)))
+            Info-directory-list))
+\end{verbatim}
+\subsection*{Starter Kit Documentation}
+\label{sec-1_9}
+
+This code defines the \texttt{starter-kit-project} which is used to publish
+the documentation for the Starter Kit to html.
+
+\begin{verbatim}
+(setq org-export-htmlize-output-type 'css)
+(unless (boundp 'org-publish-project-alist)
+  (setq org-publish-project-alist nil))
+(let ((this-dir (file-name-directory (or load-file-name buffer-file-name))))
+  (add-to-list 'org-publish-project-alist
+               `("starter-kit-documentation"
+                 :base-directory ,this-dir
+                 :base-extension "org"
+                 :style "<link rel=\"stylesheet\" href=\"emacs.css\" type=\"text/css\"/>"
+                 :publishing-directory ,this-dir
+                 :index-filename "starter-kit.org"
+                 :auto-postamble nil
+                 :postamble nil)))
+\end{verbatim}
+
+\end{document}

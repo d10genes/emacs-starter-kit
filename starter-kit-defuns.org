@@ -21,7 +21,10 @@ Functions to interactively modify Emacs transparency.
   "Set initial value of alpha parameter for the current frame"
   (interactive)
   (if (equal (frame-parameter nil 'alpha) nil)
-      (set-frame-parameter nil 'alpha 100)))
+      (set-frame-parameter nil 'alpha 93)))
+      ;; (set-frame-parameter nil 'alpha 100)))
+
+(transparency-set-initial-value)
 
 (defun transparency-set-value (numb)
   "Set level of transparency for the current frame"
@@ -29,7 +32,7 @@ Functions to interactively modify Emacs transparency.
   (if (> numb 100)
       (message "Error! The maximum value for transparency is 100!")
     (if (< numb 0)
-	(message "Error! The minimum value for transparency is 0!")
+    (message "Error! The minimum value for transparency is 0!")
       (set-frame-parameter nil 'alpha numb))))
 
 ;; want to get message to pop up telling me what variable it's at
@@ -49,6 +52,7 @@ Functions to interactively modify Emacs transparency.
   (if (< (frame-parameter nil 'alpha) 100)
       (set-frame-parameter nil 'alpha (+ (frame-parameter nil 'alpha) +3))
     (message "This is a minimum value of transparency!")))
+
 
 #+end_src
 
@@ -74,8 +78,26 @@ Functions to interactively modify Emacs transparency.
       (goto-char (point-min))
       ))
   
+  (defun xymatrixify ()
+    "Converts an org table to a matrix formatted in LaTeX."
+    (interactive)
+    (save-restriction 
+      (narrow-to-region (my-table-top -1) (my-table-top))
+      (goto-char (point-min))
+      (while (search-forward-regexp "|\s*$" nil t) (replace-match "\\\\" nil t))
+      (goto-char (point-min))
+      (while (search-forward-regexp "^|" nil t) (replace-match " " nil t))
+      (goto-char (point-min))
+      (while (search-forward-regexp " | " nil t) (replace-match " & " nil t))
+      (goto-char (point-min))
+      (insert "\\xymatrix\{\n")
+      (goto-char (point-max))
+      (insert "\n}")
+      (goto-char (point-min))
+      ))
+  
   (defun i-matrixify (arg)
-    "Converts an org table to a matrix formatted in LaTeX. Takes an argument to specify delimiter: (, [ and |, etc give matrix with respective delimiters, but no environment enclosure (\\[ \\]), while p, b and v, etc. give same delimiters with the environment."
+    "Converts an org table to a matrix formatted in LaTeX. Takes an argument to specify delimiter: (, [ and |, etc give matrix with respective delimiters, but no environment enclosure (\\[ \\]), while p, b and v, etc. give same delimiters with the environment. If the delimiter is 'x,' then it will run the xymatrixify function."
     (interactive "cEnter matrix delimiter: ")
     (setq end-env "")
     (setq begin-env "")
@@ -90,19 +112,21 @@ Functions to interactively modify Emacs transparency.
           (setq begin-env "\\\[\n")
           (setq end-env "\n\\\]")
           (setq delim (string arg)))))
-    (save-restriction 
-      (narrow-to-region (my-table-top -1) (my-table-top))
-      (goto-char (point-min))
-      (while (search-forward-regexp "|\s*$" nil t) (replace-match "\\\\" nil t))
-      (goto-char (point-min))
-      (while (search-forward-regexp "^|" nil t) (replace-match " " nil t))
-      (goto-char (point-min))
-      (while (search-forward-regexp " | " nil t) (replace-match " & " nil t))
-      (goto-char (point-min))
-      (insert (concat begin-env "\\begin{" delim "matrix}\n"))
-      (goto-char (point-max))
-      (insert (concat "\n\\end{" delim "matrix}" end-env))
-      (goto-char (point-min))))
+    (if (equal delim "x")
+        (xymatrixify)
+      (save-restriction 
+        (narrow-to-region (my-table-top -1) (my-table-top))
+        (goto-char (point-min))
+        (while (search-forward-regexp "|\s*$" nil t) (replace-match "\\\\" nil t))
+        (goto-char (point-min))
+        (while (search-forward-regexp "^|" nil t) (replace-match " " nil t))
+        (goto-char (point-min))
+        (while (search-forward-regexp " | " nil t) (replace-match " & " nil t))
+        (goto-char (point-min))
+        (insert (concat begin-env "\\begin{" delim "matrix}\n"))
+        (goto-char (point-max))
+        (insert (concat "\n\\end{" delim "matrix}" end-env))
+        (goto-char (point-min)))))
   
   (defun my-table-up-line (&optional arg)
     "Helper function that recursively goes to the beginning of the table if arg is 1 or absent, and to the end of table if -1. Returns final position."
@@ -140,7 +164,7 @@ Functions to interactively modify Emacs transparency.
         (progn
           (setq val arg)
           (insert "arg!"))
-      (setq val 0))             ;; originally 2, testing with 0
+      (setq val 1))             ;; originally 2, testing with 0
     (save-excursion
       (save-restriction 
         (narrow-to-region start end)
@@ -152,10 +176,13 @@ Functions to interactively modify Emacs transparency.
         (while (search-forward-regexp " & " nil t) (replace-match " | " nil t))
         (goto-char (point-min))))
     (goto-char end)
-    (beginning-of-line val)
+    (beginning-of-line (if (> val 0)
+                           2
+                         1))
     (kill-line val)
     (goto-char start)
     (kill-line (- 0 val)))
+  
   
 #+END_SRC
 

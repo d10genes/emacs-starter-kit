@@ -1,0 +1,12 @@
+# -*- mode: latex, org-mode -*-
+#name : *...*
+# author: Chris Beard
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+\left${1:\{} $0 \right${1:$(cond
+                            ((string-match "|" yas/text) "|")
+                            ((string-match "(" yas/text) ")")
+                            ((string-match "\\\[" yas/text) "]")
+                            ((string-match "\{" yas/text) "\\\\\}")
+                            (t yas/text)
+                            )}
