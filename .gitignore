@@ -26,6 +26,7 @@ starter-kit*html
 doc
 eshell/lastdir
 eshell/history
+\#*
 
 ## ignore packages held in the src directory
 src
